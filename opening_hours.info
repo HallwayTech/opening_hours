@@ -1,0 +1,4 @@
+name = Opening hours
+description = Provides database structure and interfaces for managing the opening hours for libraries, offices, shops, etc.
+core = 6.x
+
