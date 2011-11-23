@@ -5,7 +5,7 @@
  */
 
 /**
- * Implementation of hook_schema().
+ * Implements of hook_schema().
  */
 function opening_hours_schema() {
   $schema = array();
@@ -77,14 +77,14 @@ function opening_hours_schema() {
 }
 
 /**
- * Implementation of hook_install().
+ * Implements of hook_install().
  */
 function opening_hours_install() {
   drupal_install_schema('opening_hours');
 }
 
 /**
- * Implementation of hook_uninstall().
+ * Implements of hook_uninstall().
  */
 function opening_hours_uninstall() {
   drupal_uninstall_schema('opening_hours');
