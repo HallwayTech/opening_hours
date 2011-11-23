@@ -4,3 +4,24 @@
  * Opening hours module.
  */
 
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * We add our own fieldset to the node settings form, so the user can
+ * enable opening hours for a node type there.
+ */
+function opening_hours_form_node_type_form_alter(&$form, &$form_state) {
+  $form['opening_hours'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Opening hours'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+
+  $form['opening_hours']['opening_hours_enabled'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable opening hours for this content type'),
+    '#default_value' => variable_get('opening_hours_enabled_' . $form['#node_type']->type, FALSE),
+  );
+}
+
