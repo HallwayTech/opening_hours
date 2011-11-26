@@ -11,6 +11,7 @@ function opening_hours_schema() {
   $schema = array();
 
   $schema['opening_hours'] = array(
+    'description' => 'A single opening hours instance, ie. an open period on a specific date.',
     'fields' => array(
       'instance_id' => array(
         'description' => 'The primary identifier for an opening hours instance.',
