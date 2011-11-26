@@ -69,6 +69,20 @@ function opening_hours_theme($existing, $type, $theme, $path) {
   );
 }
 
+/**
+ * Implements of hook_admin_theme().
+ */
+function opening_hours_admin_theme_options($op = 'info', $option = NULL) {
+  switch ($op) {
+    case 'info':
+      return array('opening_hours' => array(
+        'title' => t('Opening hours'),
+        'description' => t('Use the administration theme when administering the opening hours calender.'),
+      ));
+    case 'check':
+      return ($option == 'opening_hours' && arg(0) == 'node' && arg(2) == 'opening_hours');
+  }
+}
 
 /**
  * Helper function to load our JavaScript dependencies.

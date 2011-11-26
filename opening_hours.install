@@ -82,6 +82,10 @@ function opening_hours_schema() {
  */
 function opening_hours_install() {
   drupal_install_schema('opening_hours');
+
+  // By default, we want to use the admin theme for our interface. This
+  // requires admin_theme module to work properly in Drupal 6.
+  variable_set('admin_theme_opening_hours_opening_hours', 1);
 }
 
 /**
