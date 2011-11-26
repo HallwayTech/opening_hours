@@ -5,6 +5,28 @@
  */
 
 /**
+ * Implements hook_menu().
+ */
+function opening_hours_menu() {
+  $include_path = drupal_get_path('module', 'opening_hours') . '/includes';
+  $items = array();
+
+  $items['node/%node/opening_hours'] = array(
+    'title' => 'Opening hours',
+    'page callback' => 'opening_hours_node_edit_page',
+    'page arguments' => array(1),
+    'access callback' => 'user_access',
+    'access arguments' => array('edit opening hours for node'),
+    'weight' => 3,
+    'file' => 'opening_hours.pages.inc',
+    'file path' => $include_path,
+    'type' => MENU_LOCAL_TASK,
+  );
+
+  return $items;
+}
+
+/**
  * Implements hook_form_FORM_ID_alter().
  *
  * We add our own fieldset to the node settings form, so the user can
@@ -23,5 +45,54 @@ function opening_hours_form_node_type_form_alter(&$form, &$form_state) {
     '#title' => t('Enable opening hours for this content type'),
     '#default_value' => variable_get('opening_hours_enabled_' . $form['#node_type']->type, FALSE),
   );
+}
+
+/**
+ * Implements hook_perm().
+ */
+function opening_hours_perm() {
+  return array(
+    'edit opening hours for content',
+  );
+}
+
+/**
+ * Implements hook_theme().
+ */
+function opening_hours_theme($existing, $type, $theme, $path) {
+  return array(
+    'opening_hours_admin' => array(
+      'arguments' => array(),
+      'path' => $path . '/templates',
+      'template' => 'opening_hours_admin',
+    ),
+  );
+}
+
+
+/**
+ * Helper function to load our JavaScript dependencies.
+ */
+function opening_hours_add_js($type = 'presentation') {
+  $files = array('opening_hours.base.js');
+
+  if ($type == 'admin') {
+    $files[] = 'underscore-min.js';
+    $files[] = 'backbone-min.js';
+    $files[] = 'opening_hours.models.js';
+    $files[] = 'opening_hours.collections.js';
+    $files[] = 'opening_hours.views.js';
+    $files[] = 'opening_hours.routers.js';
+    $files[] = 'opening_hours.admin.js';
+  }
+  elseif ($type == 'presentation') {
+    $files[] = 'opening_hours.presentation.js';
+  }
+
+  $path = drupal_get_path('module', 'opening_hours');
+
+  foreach ($files as $filename) {
+    drupal_add_js($path . '/' . $filename);
+  }
 }
 
