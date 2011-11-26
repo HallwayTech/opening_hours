@@ -93,5 +93,9 @@ function opening_hours_install() {
  */
 function opening_hours_uninstall() {
   drupal_uninstall_schema('opening_hours');
+
+  // Delete any variables we have set.
+  variable_del('admin_theme_opening_hours_opening_hours');
+  db_query("DELETE FROM variable WHERE name LIKE = 'opening_hours_%'");
 }
 
