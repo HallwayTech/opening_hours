@@ -60,14 +60,48 @@ if (typeof Date.prototype.setISODate !== 'function') {
 // oun the current locale.
 var weekdays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
-Drupal.OpeningHours.Week = function (date, firstDayOfWeek) {
+Drupal.OpeningHours.Week = function (dateStr, firstDayOfWeek) {
   var self = this;
 
   self.constructor = function () {
-    self.date = date;
+    self.dateStr = dateStr || new Date().getISODate();
     self.firstDayOfWeek = firstDayOfWeek;
     self.weekDays = self.orderedWeekDays(self.firstDayOfWeek);
+    self.dates = self.getDates();
   };
+
+  // Find all the dates our week spans over.
+  self.getDates = function () {
+    var date = new Date().setISODate(self.dateStr),
+        dates = [],
+        dayOffset = 0,
+        tempDate,
+        todaysDayNumber = date.getDay();
+
+    // Determine how far back in time the first day of the week was.
+    // This is a bit weird, since the current day number might be larger
+    // than the first day number.
+    // If today's number is larger, this is fairly easy.
+    if (todaysDayNumber < self.firstDayOfWeek) {
+      dayOffset = todaysDayNumber - self.firstDayOfWeek;
+    }
+    // In the other case, we reverse the order of the subtraction.
+    else if (todaysDayNumber > self.firstDayOfWeek) {
+      dayOffset = self.firstDayOfWeek - todaysDayNumber;
+    }
+
+    while (dates.length < 7) {
+      tempDate = new Date().setISODate(self.dateStr);
+
+      tempDate.setDate(tempDate.getDate() + dayOffset);
+
+      dates.push(tempDate);
+      dayOffset += 1;
+    }
+
+    return dates;
+  };
+
 
   /**
    * Get the weekdays in the order.
