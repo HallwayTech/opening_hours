@@ -16,7 +16,7 @@ function opening_hours_menu() {
     'page callback' => 'opening_hours_node_edit_page',
     'page arguments' => array(1),
     'access callback' => 'user_access',
-    'access arguments' => array('edit opening hours for node'),
+    'access arguments' => array('edit opening hours for content'),
     'weight' => 3,
     'file' => 'opening_hours.pages.inc',
     'file path' => $include_path,
