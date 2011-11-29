@@ -1,4 +1,6 @@
 name = Opening hours
 description = Provides database structure and interfaces for managing the opening hours for libraries, offices, shops, etc.
+dependencies[] = date_popup
+dependencies[] = jquery_ui
 core = 6.x
 

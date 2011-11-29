@@ -89,8 +89,42 @@ function opening_hours_admin_theme_options($op = 'info', $option = NULL) {
  */
 function opening_hours_add_js($type = 'presentation') {
   $files = array('opening_hours.base.js');
+  $settings = array(
+    'firstDayOfWeek' => (integer) variable_get('date_first_day', 1),
+    // Options for the jQuery UI datepicker date formatter.
+    'formatDate' => array(
+      'monthNames' => array(
+        t('January'),
+        t('February'),
+        t('March'),
+        t('April'),
+        t('May'),
+        t('June'),
+        t('July'),
+        t('August'),
+        t('September'),
+        t('October'),
+        t('November'),
+        t('December'),
+      ),
+      'dayNames' => array(
+        t('Sunday'),
+        t('Monday'),
+        t('Tuesday'),
+        t('Wednesday'),
+        t('Thursday'),
+        t('Friday'),
+        t('Saturday'),
+      ),
+    ),
+  );
 
+  // We need the datepicker plugin for formatting and selecting dates.
+  date_popup_load();
   if ($type == 'admin') {
+    // We use jQuery UI dialogs for editing opening hours.
+    jquery_ui_add('ui.dialog');
+
     $files[] = 'underscore-min.js';
     $files[] = 'backbone-min.js';
     $files[] = 'opening_hours.models.js';
@@ -106,7 +140,9 @@ function opening_hours_add_js($type = 'presentation') {
   $path = drupal_get_path('module', 'opening_hours');
 
   foreach ($files as $filename) {
-    drupal_add_js($path . '/' . $filename);
+    drupal_add_js($path . '/js/' . $filename);
   }
+
+  drupal_add_js(array('OpeningHours' => $settings), 'setting');
 }
 
