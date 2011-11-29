@@ -23,6 +23,24 @@ function opening_hours_menu() {
     'type' => MENU_LOCAL_TASK,
   );
 
+  $items['opening_hours/instances'] = array(
+    'page callback' => 'opening_hours_crud_api_page',
+    'access callback' => TRUE,
+    'file' => 'opening_hours.pages.inc',
+    'file path' => $include_path,
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['opening_hours/instances/%opening_hours_instance'] = array(
+    'page callback' => 'opening_hours_instance_id_api_page',
+    'page arguments' => array(2),
+    'access callback' => 'user_access',
+    'access arguments' => array('edit opening hours for content'),
+    'file' => 'opening_hours.pages.inc',
+    'file path' => $include_path,
+    'type' => MENU_CALLBACK,
+  );
+
   return $items;
 }
 
@@ -82,6 +100,34 @@ function opening_hours_admin_theme_options($op = 'info', $option = NULL) {
     case 'check':
       return ($option == 'opening_hours' && arg(0) == 'node' && arg(2) == 'opening_hours');
   }
+}
+
+/**
+ * Load opening hours instance by id.
+ */
+function opening_hours_instance_load($instance_id) {
+  $query = db_query("SELECT * FROM opening_hours WHERE instance_id = %d LIMIT 1", array(
+    ':id' => $instance_id,
+  ));
+
+  return db_fetch_object($query);
+}
+
+/**
+ * Load opening hours instances by nid and date.
+ */
+function opening_hours_instance_load_multiple($nid, $date) {
+  $query = db_query("SELECT * FROM opening_hours WHERE nid = %d AND date = '%s'", array(
+    ':nid' => $nid,
+    ':date' => $date,
+  ));
+
+  $results = array();
+  while ($row = db_fetch_object($query)) {
+    $results[] = $row;
+  }
+
+  return $results;
 }
 
 /**
