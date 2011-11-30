@@ -110,7 +110,7 @@ function opening_hours_instance_load($instance_id) {
     ':id' => $instance_id,
   ));
 
-  return db_fetch_object($query);
+  return opening_hours_instance_prepare($row);
 }
 
 /**
@@ -127,10 +127,25 @@ function opening_hours_instance_load_multiple($nid, $from_date, $to_date) {
 
   $results = array();
   while ($row = db_fetch_object($query)) {
-    $results[] = $row;
+    $results[] = opening_hours_instance_prepare($row);
   }
 
   return $results;
+}
+
+/**
+ * Prepare an instance object loaded from the database for use with Backbone.
+ */
+function opening_hours_instance_prepare($instance) {
+  // Cast integers to the correct type.
+  $instance->instance_id = (integer) $instance->instance_id;
+  $instance->nid = (integer) $instance->nid;
+  $instance->original_instance_id = (!empty($instance->original_instance_id)) ? (integer) $instance->original_instance_id : NULL;
+
+  // Backbone expects the primary key to be named `id`. Let's not disappoint.
+  $instance->id = $instance->instance_id;
+  
+  return $instance;
 }
 
 /**
