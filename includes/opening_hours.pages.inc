@@ -25,8 +25,8 @@ function opening_hours_crud_api_page() {
     case 'POST':
       break;
     case 'GET':
-      if (!empty($_REQUEST['date']) && !empty($_REQUEST['nid'])) {
-        $output[] = opening_hours_instance_load_multiple($_REQUEST['nid'], $_REQUEST['date']);
+      if (!empty($_REQUEST['from_date']) && !empty($_REQUEST['to_date']) && !empty($_REQUEST['nid'])) {
+        $output = opening_hours_instance_load_multiple($_REQUEST['nid'], $_REQUEST['from_date'], $_REQUEST['to_date']);
       }
   }
 
