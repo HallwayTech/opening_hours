@@ -133,7 +133,7 @@ function opening_hours_instance_load_multiple($nid, $date) {
 /**
  * Helper function to load our JavaScript dependencies.
  */
-function opening_hours_add_js($type = 'presentation') {
+function opening_hours_add_js($type = 'presentation', $nid = FALSE) {
   $files = array('opening_hours.base.js');
   $settings = array(
     'firstDayOfWeek' => (integer) variable_get('date_first_day', 1),
@@ -178,6 +178,9 @@ function opening_hours_add_js($type = 'presentation') {
     $files[] = 'opening_hours.views.js';
     $files[] = 'opening_hours.routers.js';
     $files[] = 'opening_hours.admin.js';
+
+    // For the admin page, we need the node ID, passed from the page callback.
+    $settings['nid'] = $nid;
   }
   elseif ($type == 'presentation') {
     $files[] = 'opening_hours.presentation.js';

@@ -16,6 +16,7 @@ Drupal.OpeningHours.AdminRouter = Backbone.Router.extend({
   initialize: function (options) {
     this.container = options.container;
     this.firstDayOfWeek = options.firstDayOfWeek;
+    this.nid = options.nid;
     this.weekDayNames = options.weekDayNames;
 
     // Instantiate our main admin view.
