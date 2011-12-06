@@ -20,6 +20,19 @@
     <% } %>
   </h3>
 
-  <div class="days"></div>
+  <table class="days">
+    <thead>
+      <% _.each(dateHeaders, function (header) { %><th><%= header %></th><% }); %>
+    </thead>
+    <tbody>
+      <% _.each(dateColumns, function (column) { %><td><%= column %></td><% }); %>
+    </tbody>
+  </table>
+</script>
+
+<script type="text/template" id="oho-instance-display-template">
+  <span class="start_time"><%= start_time %></span> –
+  <span class="end_time"><%= end_time %></span>
+  <p class="notice"><%= notice %></p>
 </script>
 

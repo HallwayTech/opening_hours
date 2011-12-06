@@ -10,7 +10,8 @@
   $(function () {
     Drupal.OpeningHours.adminApp = new Drupal.OpeningHours.AdminRouter({
       container: $('#opening-hours-admin'),
-      firstDayOfWeek: Drupal.settings.OpeningHours.firstDayOfWeek
+      firstDayOfWeek: Drupal.settings.OpeningHours.firstDayOfWeek,
+      nid: Drupal.settings.OpeningHours.nid
     });
 
     // Start the router history tracking.

@@ -26,9 +26,30 @@ Drupal.OpeningHours.AdminRouter = Backbone.Router.extend({
   },
 
   today: function () {
-    this.container.html(this.adminMainView.render({
-      week: new Drupal.OpeningHours.Week(null, this.firstDayOfWeek)
-    }).el);
+    var collections = [],
+        nid = this.nid,
+        self = this,
+        week = new Drupal.OpeningHours.Week(null, this.firstDayOfWeek);
+
+    var col = new Drupal.OpeningHours.Instances({});
+    col.fetch({
+      data: {
+        from_date: week.dates[0].getISODate(),
+        to_date: week.dates[6].getISODate(),
+        nid: nid
+      },
+      error: function (collection, response) {
+        // Do something.
+      },
+      success: function (collection, response) {
+        self.container.html(self.adminMainView.render({
+          dayInstances: collection.groupBy(function (instance) {
+            return instance.get('date');
+          }),
+          week: new Drupal.OpeningHours.Week(null, self.firstDayOfWeek)
+        }).el);
+      }
+    });
   }
 });
 
