@@ -126,8 +126,13 @@ Drupal.OpeningHours.Week = function (dateStr, firstDayOfWeek) {
 /**
  * Format a date.
  */
-Drupal.OpeningHours.formatDate = function (date) {
-  return $.datepicker.formatDate('d. MM yy', date, Drupal.settings.OpeningHours.formatDate);
+Drupal.OpeningHours.formatDate = function (date, format) {
+  // Default format.
+  if (!format) {
+    format = 'd. MM yy';
+  }
+
+  return $.datepicker.formatDate(format, date, Drupal.settings.OpeningHours.formatDate);
 };
 
 /**
