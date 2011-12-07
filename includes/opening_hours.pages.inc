@@ -10,6 +10,7 @@
 function opening_hours_node_edit_page($node) {
   drupal_set_title(t('Opening hours for @title', array('@title' => $node->title)));
 
+  drupal_add_css(drupal_get_path('module', 'opening_hours') . '/css/opening_hours.admin.css');
   opening_hours_add_js('admin', $node->nid);
 
   return theme('opening_hours_admin');

@@ -1,0 +1,13 @@
+/**
+ * @file
+ * Styling for the opening hours admin interface.
+ */
+
+#opening-hours-admin .admin-main-view .instance-display-view {
+  background-color: #cfc;
+  border: 1px solid #aea;
+  color: #373;
+  margin-bottom: 0.5em;
+  padding: 0.5em;
+}
+
