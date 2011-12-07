@@ -19,6 +19,59 @@ function pad(n) {
   return n < 10 ? '0' + n : n;
 }
 
+if (typeof Date.prototype.getWeek !== 'function') {
+  /**
+   * Get the ISO week number for a date.
+   */
+  Date.prototype.getWeek = function(firstDayOfWeek) {
+    // Default first day of week is monday. Sunday is zero.
+    if (!firstDayOfWeek && firstDayOfWeek !== 0) {
+      firstDayOfWeek = 1;
+    }
+
+    var januaryFirst = new Date(this.getFullYear(), 0, 1),
+        januaryFirstWeekDay = januaryFirst.getDay() - firstDayOfWeek,
+        // Date difference in seconds.
+        delta = (this.getTime() - januaryFirst.getTime()) / 1000,
+        // Date difference in days.
+        dayCount = delta / 86400,
+        // These will be used below.
+        nextYear, nextYearWeekDay, weekNumber;
+
+    // This to compensate for the fact that the first day of week might
+    // have a numerical value larger than the current - since Sunday is
+    // zero. Additionally, weird locales might start the week at another day.
+    if (januaryFirstWeekDay < 0) {
+      januaryFirstWeekDay = januaryFirstWeekDay + 7;
+    }
+
+    // If the year starts before middle of the week, ie. the fourth day,
+    // it might be week 52, 53 or 1.
+    if (januaryFirstWeekDay < 4) {
+      weekNumber = Math.floor((dayCount + januaryFirstWeekDay - 1) / 7) + 1;
+
+      // Week 53 does not occur every year, so figure out if this is
+      // applicable in this instance.
+      if (weekNumber > 52) {
+        nextYear = new Date(this.getFullYear() + 1, 0, 1);
+        nextYearWeekDay = nextYear.getDay() - firstDayOfWeek;
+
+        // Same treatment as januaryFirstWeekDay.
+        if (nextYearWeekDay < 0) {
+          nextYearWeekDay = nextYearWeekDay + 7;
+        }
+
+        weekNumber = (nextYearWeekDay < 4) ? 1 : 53;
+      }
+    }
+    else {
+      weekNumber = Math.ceil((dayCount + januaryFirstWeekDay - 1) / 7);
+    }
+
+    return weekNumber;
+  };
+}
+
 if (typeof Date.prototype.getISODate !== 'function') {
   /**
    * Format date in ISO 8601-format.
