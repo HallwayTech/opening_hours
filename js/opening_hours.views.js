@@ -35,7 +35,8 @@ Drupal.OpeningHours.AdminMainView = Backbone.View.extend({
 
     // Render the main template.
     $(this.el).html(this.template({
-      'header': '',
+      'weekNumber': options.week.dates[0].getWeek(),
+      'year': options.week.dates[0].getFullYear(),
       'dateHeaders': dateHeaders,
       'dateColumns': dateColumns,
       'fromDate': dateRange[0],

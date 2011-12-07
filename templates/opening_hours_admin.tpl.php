@@ -12,7 +12,10 @@
 </div>
 
 <script type="text/template" id="oho-admin-main-template">
-  <h2><%- header %></h2>
+  <h2><?php print t('Week !week, !year', array(
+    '!week' => '<%- weekNumber %>',
+    '!year' => '<%- year %>',
+  )); ?></h2>
   <h3>
     <span class="date from"><%- fromDate %></span>
     <% if (toDate) { %>
