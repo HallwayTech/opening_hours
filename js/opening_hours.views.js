@@ -15,10 +15,15 @@ Drupal.OpeningHours.AdminMainView = Backbone.View.extend({
   className: 'admin-main-view',
   template: _.template($("#oho-admin-main-template").html()),
 
+  initialize: function (options) {
+    _.bindAll(this);
+  },
+
   render: function (options) {
     var dateRange = Drupal.OpeningHours.formatDateRange(options.week.dates[0], options.week.dates[6]),
         dateHeaders = [],
-        dateColumns = [];
+        dateColumns = [],
+        columnsContainer;
 
     // Create and render a DayView for each day in the week.
     _.each(options.week.dates, function (date) {
@@ -30,7 +35,7 @@ Drupal.OpeningHours.AdminMainView = Backbone.View.extend({
 
       // Render a header for the date as well as the actual date display.
       dateHeaders.push(Drupal.OpeningHours.formatDate(date, 'DD d. MM'));
-      dateColumns.push($(view.render().el).html());
+      dateColumns.push(view.render().el);
     });
 
     // Render the main template.
@@ -38,10 +43,17 @@ Drupal.OpeningHours.AdminMainView = Backbone.View.extend({
       'weekNumber': options.week.dates[0].getWeek(),
       'year': options.week.dates[0].getFullYear(),
       'dateHeaders': dateHeaders,
-      'dateColumns': dateColumns,
       'fromDate': dateRange[0],
       'toDate': dateRange[1]
     }));
+
+    columnsContainer = this.$('tbody tr');
+
+    // I can't find a way to put the columns in via the template, so we
+    // add them to the DOM dynamically, even though that's a lot slower.
+    _.each(dateColumns, function (column) {
+      columnsContainer.append(column);
+    });
 
     return this;
   }
@@ -52,6 +64,7 @@ Drupal.OpeningHours.AdminMainView = Backbone.View.extend({
  */
 Drupal.OpeningHours.DayView = Backbone.View.extend({
   className: 'day-view',
+  tagName: 'td',
 
   initialize: function (options) {
     this.date = options.date;
@@ -84,7 +97,6 @@ Drupal.OpeningHours.DayView = Backbone.View.extend({
 Drupal.OpeningHours.InstanceDisplayView = Backbone.View.extend({
   className: 'instance-display-view',
   template: _.template($("#oho-instance-display-template").html()),
-
   initialize: function (options) {
     _.bindAll(this, ['render']);
     this.date = options.date;

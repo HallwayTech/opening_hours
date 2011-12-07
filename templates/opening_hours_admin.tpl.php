@@ -25,11 +25,11 @@
 
   <table class="days">
     <thead>
-      <% _.each(dateHeaders, function (header) { %><th><%= header %></th><% }); %>
+      <tr>
+        <% _.each(dateHeaders, function (header) { %><th><%= header %></th><% }); %>
+      </tr>
     </thead>
-    <tbody>
-      <% _.each(dateColumns, function (column) { %><td><%= column %></td><% }); %>
-    </tbody>
+    <tbody><tr></tr></tbody>
   </table>
 </script>
 
