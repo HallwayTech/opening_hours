@@ -21,7 +21,8 @@ Drupal.OpeningHours.AdminRouter = Backbone.Router.extend({
 
     // Instantiate our main admin view.
     this.adminMainView = new Drupal.OpeningHours.AdminMainView({
-      firstDayOfWeek: this.firstDayOfWeek
+      firstDayOfWeek: this.firstDayOfWeek,
+      nid: this.nid
     });
   },
 

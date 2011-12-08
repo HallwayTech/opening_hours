@@ -10,6 +10,7 @@
 function opening_hours_node_edit_page($node) {
   drupal_set_title(t('Opening hours for @title', array('@title' => $node->title)));
 
+  drupal_add_css(drupal_get_path('module', 'jquery_ui') . '/jquery.ui/themes/default/ui.all.css');
   drupal_add_css(drupal_get_path('module', 'opening_hours') . '/css/opening_hours.admin.css');
   opening_hours_add_js('admin', $node->nid);
 
@@ -24,6 +25,12 @@ function opening_hours_crud_api_page() {
 
   switch ($_SERVER['REQUEST_METHOD']) {
     case 'POST':
+      $instance = json_decode(file_get_contents("php://input"));
+
+      if (drupal_write_record('opening_hours', $instance) === SAVED_NEW) {
+        $output[] = $instance;
+      }
+
       break;
     case 'GET':
       if (!empty($_REQUEST['from_date']) && !empty($_REQUEST['to_date']) && !empty($_REQUEST['nid'])) {

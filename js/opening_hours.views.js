@@ -17,20 +17,26 @@ Drupal.OpeningHours.AdminMainView = Backbone.View.extend({
 
   initialize: function (options) {
     _.bindAll(this);
+
+    this.firstDayOfWeek = options.firstDayOfWeek;
+    this.nid = options.nid;
   },
 
   render: function (options) {
     var dateRange = Drupal.OpeningHours.formatDateRange(options.week.dates[0], options.week.dates[6]),
         dateHeaders = [],
         dateColumns = [],
-        columnsContainer;
+        columnsContainer,
+        mainView = this;
 
     // Create and render a DayView for each day in the week.
     _.each(options.week.dates, function (date) {
       var dateStr = date.getISODate(),
           view = new Drupal.OpeningHours.DayView({
             date: date,
-            instances: options.dayInstances[dateStr]
+            firstDayOfWeek: mainView.firstDayOfWeek,
+            instances: options.dayInstances[dateStr],
+            nid: mainView.nid
           });
 
       // Render a header for the date as well as the actual date display.
@@ -66,15 +72,33 @@ Drupal.OpeningHours.DayView = Backbone.View.extend({
   className: 'day-view',
   tagName: 'td',
 
+  events: {
+    dblclick: 'addNewInstance'
+  },
+
   initialize: function (options) {
+    _.bindAll(this);
+
     this.date = options.date;
+    this.nid = options.nid;
     this.instances = options.instances;
     this.instanceViews = _.map(this.instances, function (instance) {
       return new Drupal.OpeningHours.InstanceDisplayView({
         date: options.date,
-        instance: instance
+        firstDayOfWeek: options.firstDayOfWeek,
+        nid: options.nid,
+        instance: instance,
       });
     });
+  },
+
+  addNewInstance: function () {
+    var view = new Drupal.OpeningHours.InstanceEditView({
+      date: this.date,
+      nid: this.nid
+    });
+
+    view.render();
   },
 
   render: function (options) {
@@ -97,22 +121,107 @@ Drupal.OpeningHours.DayView = Backbone.View.extend({
 Drupal.OpeningHours.InstanceDisplayView = Backbone.View.extend({
   className: 'instance-display-view',
   template: _.template($("#oho-instance-display-template").html()),
+
   initialize: function (options) {
     _.bindAll(this, ['render']);
+
     this.date = options.date;
     this.instance = options.instance;
   },
 
   render: function (options) {
     var instance = this.instance;
-  
+
     $(this.el).html(this.template({
       start_time: instance.get('start_time'),
       end_time: instance.get('end_time'),
       notice: instance.get('notice')
     }));
-    
+
     return this;
+  }
+});
+
+/**
+ * Display a single opening hours instance.
+ */
+Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
+  className: 'instance-edit-view',
+  template: _.template($("#oho-instance-edit-template").html()),
+
+  initialize: function (options) {
+    _.bindAll(this);
+
+    this.date = options.date || new Date();
+    this.firstDayOfWeek = options.firstDayOfWeek;
+    this.nid = options.nid;
+
+    // If we're editing an existing instance.
+    if (options.instance) {
+      this.title = Drupal.t('Edit opening hours instance');
+      this.instance = options.instance;
+    }
+    else {
+      this.title = Drupal.t('Add new opening hours instance');
+      this.instance = new Drupal.OpeningHours.Instance({
+        date: this.date.getISODate(),
+        nid: this.nid
+      });
+    }
+  },
+
+  render: function (options) {
+    var buttons = {}, dialogInstance,
+        instance = this.instance,
+        view = this;
+
+    // Render the editing form from the template.
+    $(this.el).html(this.template({
+      date: instance.get('date'),
+      start_time: instance.get('start_time'),
+      end_time: instance.get('end_time'),
+      notice: instance.get('notice')
+    }));
+
+    // Set the placeholder text from the title on all text fields.
+    this.$('[type=text]').each(function () {
+      if (this.title) {
+        this.placeholder = this.title;
+      }
+    });
+
+    // Configure buttons for the dialog.
+    buttons[Drupal.t('Save')] = function () {
+      view.saveInstance();
+    };
+
+    dialogInstance = $('<div></div>')
+      .html(this.el)
+      .dialog({
+        buttons: buttons,
+        draggable: false,
+        modal: true,
+        resizable: false,
+        title: this.title,
+        width: 600
+      });
+
+
+    return this;
+  },
+
+  saveInstance: function () {
+    var form = this.$('form');
+
+    this.instance.set({
+      date: form.find('.date').val(),
+      start_time: form.find('.start_time').val(),
+      end_time: form.find('.end_time').val(),
+      notice: form.find('.notice').val()
+    });
+
+    this.instance.save();
+
   }
 });
 

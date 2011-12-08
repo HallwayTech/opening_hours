@@ -14,3 +14,26 @@
   border-radius: 0.2em;
 }
 
+#oho-instance-edit-form fieldset {
+  margin-bottom: 1em;
+}
+
+#oho-instance-edit-form .text {
+  border: 1px solid;
+  border-color: #ccc #ddd #ddd;
+  padding: 0 0.25em;
+}
+
+#oho-instance-edit-form .text:focus {
+  border-color: #4d90fe;
+}
+
+#oho-instance-edit-form label {
+  display: block;
+  margin-bottom: 0.25em;
+}
+
+#oho-instance-edit-form .notice {
+  width: 90%;
+}
+

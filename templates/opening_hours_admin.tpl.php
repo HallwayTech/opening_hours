@@ -39,3 +39,20 @@
   <p class="notice"><%= notice %></p>
 </script>
 
+<script type="text/template" id="oho-instance-edit-template">
+  <form action="." id="oho-instance-edit-form">
+    <fieldset class="date-time">
+      <input type="text" class="date text" size="9" title="<?php print t('Date'); ?>" value="<%= date %>" />
+      <input type="text" class="start_time text" size="7" title="<?php print t('Start time'); ?>" value="<%= start_time %>" />
+      to
+      <input type="text" class="end_time text" size="7" title="<?php print t('End time'); ?>" value="<%= end_time %>" />
+    </fieldset>
+
+    <fieldset class="description">
+      <label for="oho-notice"><?php print t('Notice'); ?></label>
+      <input type="text" class="notice text" name="oho-notice" id="oho-notice" title="<?php print t('What’s special about this instance?'); ?>" value="<%= notice %>" />
+    </fieldset>
+
+  </form>
+</script>
+
