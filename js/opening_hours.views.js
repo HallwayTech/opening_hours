@@ -92,13 +92,15 @@ Drupal.OpeningHours.DayView = Backbone.View.extend({
     });
   },
 
-  addNewInstance: function () {
+  addNewInstance: function (event) {
     var view = new Drupal.OpeningHours.InstanceEditView({
       date: this.date,
       nid: this.nid
     });
 
     view.render();
+
+    event.preventDefault();
   },
 
   render: function (options) {
@@ -122,11 +124,29 @@ Drupal.OpeningHours.InstanceDisplayView = Backbone.View.extend({
   className: 'instance-display-view',
   template: _.template($("#oho-instance-display-template").html()),
 
+  events: {
+    dblclick: 'editInstance'
+  },
+
   initialize: function (options) {
     _.bindAll(this, ['render']);
 
     this.date = options.date;
     this.instance = options.instance;
+  },
+
+  editInstance: function (event) {
+    var view = new Drupal.OpeningHours.InstanceEditView({
+      instance: this.instance,
+      nid: this.nid
+    });
+
+    view.render();
+
+    // We don't want this event to propagate, since if it does, the
+    // dayView will catch it and try to create a new instance.
+    event.preventDefault();
+    event.stopPropagation();
   },
 
   render: function (options) {

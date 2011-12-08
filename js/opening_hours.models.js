@@ -10,7 +10,7 @@
  * A single opening hours instance, ie. an open period on a specific date.
  */
 Drupal.OpeningHours.Instance = Backbone.Model.extend({
-  url: '/opening_hours/instances',
+  urlRoot: '/opening_hours/instances',
 
   // Make sure our required attributes are present.
   defaults: {

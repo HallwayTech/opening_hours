@@ -65,6 +65,24 @@ function opening_hours_instance_id_api_page($instance) {
       $output[] = $instance;
       break;
     case 'PUT':
+      $updated_instance = _opening_hours_get_instance_from_request();
+
+      // We can hardly save an instance that doesn't have the required data.
+      if (!$updated_instance) {
+        header('HTTP/1.1 400 Bad Request');
+        exit('Required fields were missing or invalid.');
+      }
+
+      // Check that instance_id matches up.
+      if ($updated_instance->instance_id != $instance->instance_id) {
+        header('HTTP/1.1 400 Bad Request');
+        exit('Instance ID mismatch.');
+      }
+
+      if (drupal_write_record('opening_hours', $updated_instance, array('instance_id')) === SAVED_UPDATED) {
+        $output[] = $updated_instance;
+      }
+
       break;
     case 'DELETE':
       break;
