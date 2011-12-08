@@ -37,3 +37,8 @@
   width: 90%;
 }
 
+.ui-dialog-overlay {
+  background-color: black;
+  opacity: 0.5;
+}
+
