@@ -10,7 +10,8 @@ jQuery(function($) {
 
 Drupal.OpeningHours.AdminRouter = Backbone.Router.extend({
   routes: {
-    '': 'today'
+    '': 'today',
+    'date/(\\d\\d\\d\\d-\\d\\d-\\d\\d)': 'specificDate'
   },
 
   initialize: function (options) {
@@ -27,10 +28,14 @@ Drupal.OpeningHours.AdminRouter = Backbone.Router.extend({
   },
 
   today: function () {
+    return this.specificDate(new Date().getISODate());
+  },
+
+  specificDate: function (dateStr) {
     var collections = [],
         nid = this.nid,
         self = this,
-        week = new Drupal.OpeningHours.Week(null, this.firstDayOfWeek);
+        week = new Drupal.OpeningHours.Week(dateStr, this.firstDayOfWeek);
 
     var col = new Drupal.OpeningHours.Instances({});
     col.fetch({
