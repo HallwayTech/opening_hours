@@ -110,7 +110,11 @@ function opening_hours_instance_load($instance_id) {
     ':id' => $instance_id,
   ));
 
-  return opening_hours_instance_prepare($row);
+  if ($row = db_fetch_object($query)) {
+    return opening_hours_instance_prepare($row);
+  }
+
+  return FALSE;
 }
 
 /**
@@ -144,7 +148,7 @@ function opening_hours_instance_prepare($instance) {
 
   // Backbone expects the primary key to be named `id`. Let's not disappoint.
   $instance->id = $instance->instance_id;
-  
+
   return $instance;
 }
 
