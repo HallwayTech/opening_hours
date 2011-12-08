@@ -215,10 +215,16 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
       view.saveInstance();
     };
 
+    buttons[Drupal.t('Discard changes')] = function () {
+      view.remove();
+      $(this).dialog('close').destroy();
+    };
+
     dialogInstance = $('<div></div>')
       .html(this.el)
       .dialog({
         buttons: buttons,
+        close: function () { view.remove(); },
         draggable: false,
         modal: true,
         resizable: false,
@@ -251,7 +257,6 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
     });
 
     this.instance.save();
-
   }
 });
 
