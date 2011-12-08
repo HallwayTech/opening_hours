@@ -226,6 +226,16 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
         width: 600
       });
 
+    // Enable the datepicker on the date field.
+    this.$('.date').datepicker({
+      dateFormat: 'yy-mm-dd',
+      firstDay: this.firstDayOfWeek
+    });
+
+    // Enable the timeEntry helpers on both time fields.
+    this.$('.start_time, .end_time').timeEntry({
+      show24Hours: true
+    });
 
     return this;
   },
