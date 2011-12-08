@@ -25,7 +25,18 @@ function opening_hours_crud_api_page() {
 
   switch ($_SERVER['REQUEST_METHOD']) {
     case 'POST':
-      $instance = json_decode(file_get_contents("php://input"));
+      if (!user_access('edit opening hours for content')) {
+        header('HTTP/1.1 403 Forbidden');
+        exit('Client does not have permissions to edit opening hours.');
+      }
+
+      $instance = _opening_hours_get_instance_from_request();
+
+      // We can hardly save an instance that doesn't have the required data.
+      if (!$instance) {
+        header('HTTP/1.1 400 Bad Request');
+        exit('Required fields were missing or invalid.');
+      }
 
       if (drupal_write_record('opening_hours', $instance) === SAVED_NEW) {
         $output[] = $instance;
@@ -62,5 +73,20 @@ function opening_hours_instance_id_api_page($instance) {
   drupal_set_header('Content-Type: application/json');
   echo json_encode($output);
   exit();
+}
+
+/**
+ * Helper function to get and sanitise instance from request input.
+ */
+function _opening_hours_get_instance_from_request() {
+  $instance = json_decode(file_get_contents("php://input"));
+
+  // At the very least, we must have nid, date, start_time and end_time set.
+  if (empty($instance->nid) || empty($instance->date) ||
+      empty($instance->start_time) || empty($instance->end_time)) {
+    return;
+  }
+
+  return $instance;
 }
 
