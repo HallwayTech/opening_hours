@@ -193,8 +193,18 @@ function opening_hours_add_js($type = 'presentation', $nid = FALSE) {
     // We use jQuery UI dialogs for editing opening hours.
     jquery_ui_add('ui.dialog');
 
-    $files[] = 'underscore-min.js';
-    $files[] = 'backbone-min.js';
+    // If jQuery Update is configured to use development versions of
+    // jQuery, it's probably safe to assume that we want development
+    // versions of Backbone and Underscore. 
+    if (variable_get('jquery_update_compression_type') == 'none') {
+      $files[] = 'underscore.js';
+      $files[] = 'backbone.js';
+    }
+    else {
+      $files[] = 'underscore-min.js';
+      $files[] = 'backbone-min.js';
+    }
+
     $files[] = 'opening_hours.models.js';
     $files[] = 'opening_hours.collections.js';
     $files[] = 'opening_hours.views.js';
