@@ -9,9 +9,45 @@
   color: #373;
   margin-bottom: 0.5em;
   padding: 0.5em;
-  -moz-border-radius: 0.2em;
-  -webkit-border-radius: 0.2em;
-  border-radius: 0.2em;
+  -moz-border-radius: 0.5em;
+  -webkit-border-radius: 0.5em;
+  border-radius: 0.5em;
+}
+
+#opening-hours-admin .admin-main-view .dateheader {
+  clear: left;
+  float: left;
+}
+
+#opening-hours-admin .admin-main-view .navigation {
+  float: left;
+  margin-left: 3em;
+}
+
+#opening-hours-admin .admin-main-view .navigation li {
+  float: left;
+}
+
+#opening-hours-admin .admin-main-view .navigation a {
+  display: block;
+  background-color: #eee;
+  border: 1px solid;
+  color: #444;
+  margin-right: 0.25em;
+  border-color: #ccc #aaa #aaa #ccc;
+  padding: 0 0.65em;
+  line-height: 200%;
+}
+
+/** Prev and next are giant arrow characters, enlarge them. **/
+#opening-hours-admin .admin-main-view .navigation .prev,
+#opening-hours-admin .admin-main-view .navigation .next {
+  font-size: 200%;
+  line-height: 100%;
+}
+
+#opening-hours-admin .admin-main-view .day-view {
+  min-height: 100px;
 }
 
 #oho-instance-edit-form fieldset {

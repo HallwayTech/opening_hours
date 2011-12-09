@@ -22,12 +22,42 @@ Drupal.OpeningHours.AdminMainView = Backbone.View.extend({
     this.nid = options.nid;
   },
 
+  goToPreviousWeek: function (event) {
+    var date = new Date(this.currentWeek.dates[0].getTime());
+
+    // Subtract seven days to get the first date of the previous week,
+    // and use the router to navigate back to that.
+    date.setDate(date.getDate() - 7);
+    Drupal.OpeningHours.adminApp.navigate('date/' + date.getISODate(), true);
+
+    event.preventDefault();
+  },
+
+  goToCurrentWeek: function (event) {
+    Drupal.OpeningHours.adminApp.navigate('', true);
+
+    event.preventDefault();
+  },
+
+  goToNextWeek: function (event) {
+    var date = new Date(this.currentWeek.dates[6].getTime());
+
+    // Add one day to the last date of the previous week,
+    // and use the router to navigate back to that.
+    date.setDate(date.getDate() + 1);
+    Drupal.OpeningHours.adminApp.navigate('date/' + date.getISODate(), true);
+
+    event.preventDefault();
+  },
+
   render: function (options) {
     var dateRange = Drupal.OpeningHours.formatDateRange(options.week.dates[0], options.week.dates[6]),
         dateHeaders = [],
         dateColumns = [],
         columnsContainer,
         mainView = this;
+
+    this.currentWeek = options.week;
 
     // Create and render a DayView for each day in the week.
     _.each(options.week.dates, function (date) {
@@ -53,10 +83,14 @@ Drupal.OpeningHours.AdminMainView = Backbone.View.extend({
       'toDate': dateRange[1]
     }));
 
-    columnsContainer = this.$('tbody tr');
+    // Set up bindings for navigation buttons.
+    this.$('.navigation .prev').click(this.goToPreviousWeek);
+    this.$('.navigation .today').click(this.goToCurrentWeek);
+    this.$('.navigation .next').click(this.goToNextWeek);
 
     // I can't find a way to put the columns in via the template, so we
     // add them to the DOM dynamically, even though that's a lot slower.
+    columnsContainer = this.$('tbody tr');
     _.each(dateColumns, function (column) {
       columnsContainer.append(column);
     });

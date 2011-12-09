@@ -12,16 +12,24 @@
 </div>
 
 <script type="text/template" id="oho-admin-main-template">
-  <h2><?php print t('Week !week, !year', array(
-    '!week' => '<%- weekNumber %>',
-    '!year' => '<%- year %>',
-  )); ?></h2>
-  <h3>
-    <span class="date from"><%- fromDate %></span>
-    <% if (toDate) { %>
-      – <span class="date to"><%- toDate %></span> 
-    <% } %>
-  </h3>
+  <div class="dateheader">
+    <h2><?php print t('Week !week, !year', array(
+      '!week' => '<%- weekNumber %>',
+      '!year' => '<%- year %>',
+    )); ?></h2>
+    <h3 class="dateheader">
+      <span class="date from"><%- fromDate %></span>
+      <% if (toDate) { %>
+        – <span class="date to"><%- toDate %></span> 
+      <% } %>
+    </h3>
+  </div>
+
+  <ul class="navigation clear-block">
+    <li><a class="prev" href="#" title="<?php print t('Previous week'); ?>">‹</a>
+    <li><a class="today" href="#"><?php print t('Current week'); ?></a>
+    <li><a class="next" href="#" title="<?php print t('Next week'); ?>">›</a>
+  </ul>
 
   <table class="days">
     <thead>
