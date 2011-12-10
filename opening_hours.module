@@ -213,6 +213,7 @@ function opening_hours_add_js($type = 'presentation', $nid = FALSE) {
 
     // For the admin page, we need the node ID, passed from the page callback.
     $settings['nid'] = $nid;
+    $settings['path'] = base_path() . drupal_get_path('module', 'opening_hours');
   }
   elseif ($type == 'presentation') {
     $files[] = 'opening_hours.presentation.js';
