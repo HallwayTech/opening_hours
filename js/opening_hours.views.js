@@ -55,8 +55,12 @@ Drupal.OpeningHours.AdminMainView = Backbone.View.extend({
         dateHeaders = [],
         dateColumns = [],
         columnsContainer,
+        elem = $(this.el),
         mainView = this;
 
+    // Clear out any previous content before rendering.
+    elem.empty();
+    
     this.currentWeek = options.week;
 
     // Create and render a DayView for each day in the week.
@@ -75,7 +79,7 @@ Drupal.OpeningHours.AdminMainView = Backbone.View.extend({
     });
 
     // Render the main template.
-    $(this.el).html(this.template({
+    elem.html(this.template({
       'weekNumber': $.datepicker.iso8601Week(options.week.dates[0]),
       'year': options.week.dates[0].getFullYear(),
       'dateHeaders': dateHeaders,
@@ -84,13 +88,13 @@ Drupal.OpeningHours.AdminMainView = Backbone.View.extend({
     }));
 
     // Set up bindings for navigation buttons.
-    this.$('.navigation .prev').click(this.goToPreviousWeek);
-    this.$('.navigation .today').click(this.goToCurrentWeek);
-    this.$('.navigation .next').click(this.goToNextWeek);
+    elem.find('.prev-week').click(this.goToPreviousWeek);
+    elem.find('.current-week').click(this.goToCurrentWeek);
+    elem.find('.next-week').click(this.goToNextWeek);
 
     // I can't find a way to put the columns in via the template, so we
     // add them to the DOM dynamically, even though that's a lot slower.
-    columnsContainer = this.$('tbody tr');
+    columnsContainer = elem.find('tbody tr');
     _.each(dateColumns, function (column) {
       columnsContainer.append(column);
     });

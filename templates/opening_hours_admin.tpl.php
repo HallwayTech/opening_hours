@@ -26,9 +26,9 @@
   </div>
 
   <ul class="navigation clear-block">
-    <li><a class="prev" href="#" title="<?php print t('Previous week'); ?>">‹</a>
-    <li><a class="today" href="#"><?php print t('Current week'); ?></a>
-    <li><a class="next" href="#" title="<?php print t('Next week'); ?>">›</a>
+    <li><a class="prev-week" href="#prev" title="<?php print t('Previous week'); ?>">‹</a>
+    <li><a class="current-week" href="#current"><?php print t('Current week'); ?></a>
+    <li><a class="next-week" href="#next" title="<?php print t('Next week'); ?>">›</a>
   </ul>
 
   <table class="days">

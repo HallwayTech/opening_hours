@@ -48,6 +48,7 @@ Drupal.OpeningHours.AdminRouter = Backbone.Router.extend({
         // Do something.
       },
       success: function (collection, response) {
+        self.container.empty();
         self.container.html(self.adminMainView.render({
           dayInstances: collection.groupBy(function (instance) {
             return instance.get('date');
