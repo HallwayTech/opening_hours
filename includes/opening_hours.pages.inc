@@ -85,6 +85,7 @@ function opening_hours_instance_id_api_page($instance) {
 
       break;
     case 'DELETE':
+      db_query('DELETE FROM {opening_hours} WHERE instance_id = %d', $instance->instance_id);
       break;
   }
 

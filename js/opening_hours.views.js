@@ -60,7 +60,7 @@ Drupal.OpeningHours.AdminMainView = Backbone.View.extend({
 
     // Clear out any previous content before rendering.
     elem.empty();
-    
+
     this.currentWeek = options.week;
 
     // Create and render a DayView for each day in the week.
@@ -171,6 +171,8 @@ Drupal.OpeningHours.InstanceDisplayView = Backbone.View.extend({
 
     this.date = options.date;
     this.instance = options.instance;
+
+    this.instance.bind('remove', this.remove);
   },
 
   editInstance: function (event) {
@@ -218,6 +220,8 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
     if (options.instance) {
       this.title = Drupal.t('Edit opening hours instance');
       this.instance = options.instance;
+
+      this.instance.bind('remove', this.remove);
     }
     else {
       this.title = Drupal.t('Add new opening hours instance');
@@ -250,13 +254,33 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
 
     // Configure buttons for the dialog.
     buttons[Drupal.t('Save')] = function () {
-      view.saveInstance();
+      view.saveInstance(function () {
+        view.remove();
+        $(this).dialog('close').destroy();
+      });
     };
 
     buttons[Drupal.t('Discard changes')] = function () {
       view.remove();
       $(this).dialog('close').destroy();
     };
+    // For existing instances, we also offer a delete button.
+    if (this.instance.id) {
+      buttons[Drupal.t('Delete this instance')] = function () {
+        var dialog = this;
+
+        view.instance.destroy({
+          error: function () {
+            console.log('fail');
+          },
+          success: function () {
+            $(dialog).dialog('close');
+          }
+        });
+
+        return false;
+      };
+    }
 
     dialogInstance = $('<div></div>')
       .html(this.el)

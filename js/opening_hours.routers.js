@@ -38,6 +38,7 @@ Drupal.OpeningHours.AdminRouter = Backbone.Router.extend({
         week = new Drupal.OpeningHours.Week(dateStr, this.firstDayOfWeek);
 
     var col = new Drupal.OpeningHours.Instances({});
+
     col.fetch({
       data: {
         from_date: week.dates[0].getISODate(),
