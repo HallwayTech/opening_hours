@@ -172,6 +172,7 @@ Drupal.OpeningHours.InstanceDisplayView = Backbone.View.extend({
     this.date = options.date;
     this.model = options.model;
 
+    this.model.bind('change', this.render);
     this.model.bind('remove', this.remove);
   },
 
@@ -221,6 +222,7 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
       this.title = Drupal.t('Edit opening hours instance');
       this.model = options.model;
 
+      this.model.bind('change', this.render);
       this.model.bind('remove', this.remove);
     }
     else {
