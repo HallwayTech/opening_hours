@@ -302,7 +302,9 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
 
     // Enable the timeEntry helpers on both time fields.
     this.$('.start_time, .end_time').timeEntry({
-      show24Hours: true
+      show24Hours: true,
+      spinnerImage: false,
+      timeSteps: [1, 15, 1]
     });
 
     return this;
