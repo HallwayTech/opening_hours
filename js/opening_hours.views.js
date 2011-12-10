@@ -69,7 +69,7 @@ Drupal.OpeningHours.AdminMainView = Backbone.View.extend({
           view = new Drupal.OpeningHours.DayView({
             date: date,
             firstDayOfWeek: mainView.firstDayOfWeek,
-            instances: options.dayInstances[dateStr],
+            models: options.dayInstances[dateStr],
             nid: mainView.nid
           });
 
@@ -119,13 +119,13 @@ Drupal.OpeningHours.DayView = Backbone.View.extend({
 
     this.date = options.date;
     this.nid = options.nid;
-    this.instances = options.instances;
-    this.instanceViews = _.map(this.instances, function (instance) {
+    this.models = options.models;
+    this.instanceViews = _.map(this.models, function (model) {
       return new Drupal.OpeningHours.InstanceDisplayView({
         date: options.date,
         firstDayOfWeek: options.firstDayOfWeek,
         nid: options.nid,
-        instance: instance,
+        model: model
       });
     });
   },
@@ -170,14 +170,14 @@ Drupal.OpeningHours.InstanceDisplayView = Backbone.View.extend({
     _.bindAll(this, ['render']);
 
     this.date = options.date;
-    this.instance = options.instance;
+    this.model = options.model;
 
-    this.instance.bind('remove', this.remove);
+    this.model.bind('remove', this.remove);
   },
 
   editInstance: function (event) {
     var view = new Drupal.OpeningHours.InstanceEditView({
-      instance: this.instance,
+      model: this.model,
       nid: this.nid
     });
 
@@ -190,12 +190,12 @@ Drupal.OpeningHours.InstanceDisplayView = Backbone.View.extend({
   },
 
   render: function (options) {
-    var instance = this.instance;
+    var model = this.model;
 
     $(this.el).html(this.template({
-      start_time: instance.get('start_time'),
-      end_time: instance.get('end_time'),
-      notice: instance.get('notice')
+      start_time: model.get('start_time'),
+      end_time: model.get('end_time'),
+      notice: model.get('notice')
     }));
 
     return this;
@@ -217,15 +217,15 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
     this.nid = options.nid;
 
     // If we're editing an existing instance.
-    if (options.instance) {
+    if (options.model) {
       this.title = Drupal.t('Edit opening hours instance');
-      this.instance = options.instance;
+      this.model = options.model;
 
-      this.instance.bind('remove', this.remove);
+      this.model.bind('remove', this.remove);
     }
     else {
       this.title = Drupal.t('Add new opening hours instance');
-      this.instance = new Drupal.OpeningHours.Instance({
+      this.model = new Drupal.OpeningHours.Instance({
         date: this.date.getISODate(),
         nid: this.nid
       });
@@ -234,15 +234,15 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
 
   render: function (options) {
     var buttons = {}, dialogInstance,
-        instance = this.instance,
+        model = this.model,
         view = this;
 
     // Render the editing form from the template.
     $(this.el).html(this.template({
-      date: instance.get('date'),
-      start_time: instance.get('start_time'),
-      end_time: instance.get('end_time'),
-      notice: instance.get('notice')
+      date: model.get('date'),
+      start_time: model.get('start_time'),
+      end_time: model.get('end_time'),
+      notice: model.get('notice')
     }));
 
     // Set the placeholder text from the title on all text fields.
@@ -264,12 +264,13 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
       view.remove();
       $(this).dialog('close').destroy();
     };
+
     // For existing instances, we also offer a delete button.
-    if (this.instance.id) {
+    if (this.model.id) {
       buttons[Drupal.t('Delete this instance')] = function () {
         var dialog = this;
 
-        view.instance.destroy({
+        view.model.destroy({
           error: function () {
             console.log('fail');
           },
@@ -313,14 +314,14 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
   saveInstance: function () {
     var form = this.$('form');
 
-    this.instance.set({
+    this.model.set({
       date: form.find('.date').val(),
       start_time: form.find('.start_time').val(),
       end_time: form.find('.end_time').val(),
       notice: form.find('.notice').val()
     });
 
-    this.instance.save();
+    this.model.save();
   }
 });
 
