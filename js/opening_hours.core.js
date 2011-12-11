@@ -61,8 +61,6 @@
 
         dates.push(tempDate);
 
-        console.log(tempDate.getISODate());
-
         // Reduce the offset by one to proceed to the next day.
         dayOffset -= 1;
       }
