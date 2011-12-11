@@ -215,6 +215,10 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
 
     this.date = options.date || new Date();
     this.firstDayOfWeek = options.firstDayOfWeek;
+
+    // To avoid opening multiple dialogs when the model is updated.
+    this.hasActiveDialog = false;
+
     this.nid = options.nid;
 
     // If we're editing an existing instance.
@@ -254,48 +258,59 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
       }
     });
 
-    // Configure buttons for the dialog.
-    buttons[Drupal.t('Save')] = function () {
-      view.saveInstance(function () {
+    // If we don't have the editing dialog open already, create it.
+    if (!this.hasActiveDialog) {
+      // Configure buttons for the dialog.
+      buttons[Drupal.t('Save')] = function () {
+        var wrapper = this;
+
+        view.saveInstance(function () {
+          view.remove();
+          $(wrapper).dialog("destroy").remove();
+          view.hasActiveDialog = false;
+        });
+      };
+
+      buttons[Drupal.t('Discard changes')] = function () {
         view.remove();
-        $(this).dialog('close').destroy();
-      });
-    };
+        $(this).dialog("destroy").remove();
+        view.hasActiveDialog = false;
+      };
 
-    buttons[Drupal.t('Discard changes')] = function () {
-      view.remove();
-      $(this).dialog('close').destroy();
-    };
+      // For existing instances, we also offer a delete button.
+      if (this.model.id) {
+        buttons[Drupal.t('Delete this instance')] = function () {
+          var wrapper = this;
 
-    // For existing instances, we also offer a delete button.
-    if (this.model.id) {
-      buttons[Drupal.t('Delete this instance')] = function () {
-        var dialog = this;
+          view.model.destroy({
+            error: function () {
+              console.log('fail');
+            },
+            success: function () {
+              view.remove();
+              $(wrapper).dialog("destroy").remove();
+              view.hasActiveDialog = false;
+            }
+          });
 
-        view.model.destroy({
-          error: function () {
-            console.log('fail');
-          },
-          success: function () {
-            $(dialog).dialog('close');
-          }
+          return false;
+        };
+      }
+
+      dialogInstance = $('<div></div>')
+        .html(this.el)
+        .dialog({
+          buttons: buttons,
+          close: function () { view.remove(); },
+          draggable: false,
+          modal: true,
+          resizable: false,
+          title: this.title,
+          width: 600
         });
 
-        return false;
-      };
+      this.hasActiveDialog = true;
     }
-
-    dialogInstance = $('<div></div>')
-      .html(this.el)
-      .dialog({
-        buttons: buttons,
-        close: function () { view.remove(); },
-        draggable: false,
-        modal: true,
-        resizable: false,
-        title: this.title,
-        width: 600
-      });
 
     // Enable the datepicker on the date field.
     this.$('.date').datepicker({
@@ -313,17 +328,20 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
     return this;
   },
 
-  saveInstance: function () {
+  saveInstance: function (successCallback) {
     var form = this.$('form');
 
-    this.model.set({
+    this.model.save({
       date: form.find('.date').val(),
       start_time: form.find('.start_time').val(),
       end_time: form.find('.end_time').val(),
       notice: form.find('.notice').val()
+    }, {
+      error: {
+        // TODO: Handle this.
+      },
+      success: successCallback
     });
-
-    this.model.save();
   }
 });
 
