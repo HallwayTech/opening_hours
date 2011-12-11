@@ -83,7 +83,7 @@ Drupal.OpeningHours.Week = function (dateStr, firstDayOfWeek) {
     // than the first day number.
     // If today's number is larger, this is fairly easy.
     if (todaysDayNumber < self.firstDayOfWeek) {
-      dayOffset = todaysDayNumber - self.firstDayOfWeek;
+      dayOffset = self.firstDayOfWeek - 7 + todaysDayNumber;
     }
     // In the other case, we reverse the order of the subtraction.
     else if (todaysDayNumber > self.firstDayOfWeek) {
