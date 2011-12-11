@@ -17,7 +17,7 @@
       '!week' => '<%- weekNumber %>',
       '!year' => '<%- year %>',
     )); ?></h2>
-    <h3 class="dateheader">
+    <h3>
       <span class="date from"><%- fromDate %></span>
       <% if (toDate) { %>
         – <span class="date to"><%- toDate %></span> 

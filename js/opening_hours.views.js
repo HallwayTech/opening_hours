@@ -28,7 +28,7 @@ Drupal.OpeningHours.AdminMainView = Backbone.View.extend({
     // Subtract seven days to get the first date of the previous week,
     // and use the router to navigate back to that.
     date.setDate(date.getDate() - 7);
-    Drupal.OpeningHours.adminApp.navigate('date/' + date.getISODate(), true);
+    this.goToDate(date.getISODate());
 
     event.preventDefault();
   },
@@ -45,9 +45,14 @@ Drupal.OpeningHours.AdminMainView = Backbone.View.extend({
     // Add one day to the last date of the previous week,
     // and use the router to navigate back to that.
     date.setDate(date.getDate() + 1);
-    Drupal.OpeningHours.adminApp.navigate('date/' + date.getISODate(), true);
+    this.goToDate(date.getISODate());
 
     event.preventDefault();
+  },
+
+  // Switches admin view to a specific date.
+  goToDate: function (dateStr) {
+    Drupal.OpeningHours.adminApp.navigate('date/' + dateStr, true);
   },
 
   render: function (options) {
@@ -80,17 +85,27 @@ Drupal.OpeningHours.AdminMainView = Backbone.View.extend({
 
     // Render the main template.
     elem.html(this.template({
-      'weekNumber': $.datepicker.iso8601Week(options.week.dates[0]),
-      'year': options.week.dates[0].getFullYear(),
       'dateHeaders': dateHeaders,
       'fromDate': dateRange[0],
-      'toDate': dateRange[1]
+      'toDate': dateRange[1],
+      'weekNumber': $.datepicker.iso8601Week(options.week.dates[0]),
+      'year': options.week.dates[0].getFullYear()
     }));
 
     // Set up bindings for navigation buttons.
     elem.find('.prev-week').click(this.goToPreviousWeek);
     elem.find('.current-week').click(this.goToCurrentWeek);
     elem.find('.next-week').click(this.goToNextWeek);
+
+    // Make it possible to select a date by clicking the date header.
+    elem.find('.dateheader').click(function (event) {
+      $('<div></div>').datepicker('dialog', options.week.dates[0], mainView.goToDate, {
+        modal: true
+      }, event);
+
+      event.preventDefault();
+    });
+
 
     // I can't find a way to put the columns in via the template, so we
     // add them to the DOM dynamically, even though that's a lot slower.

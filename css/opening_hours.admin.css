@@ -16,7 +16,12 @@
 
 #opening-hours-admin .admin-main-view .dateheader {
   clear: left;
+  cursor: pointer;
   float: left;
+}
+
+#opening-hours-admin .admin-main-view .dateheader:hover {
+  background-color: #ffe;
 }
 
 #opening-hours-admin .admin-main-view .navigation {
