@@ -22,43 +22,57 @@
       self.dates = self.getDates();
     };
 
+    // Get the zero-based day number in the correct order, based on the
+    // first day of week set on the object.
+    self.getDayNumberOrder = function () {
+      var counter = self.firstDayOfWeek,
+          order = [];
+
+      while (order.length < 7) {
+        order.push(counter % 7);
+        counter = counter + 1;
+      }
+
+      return order;
+    };
+
     // Find all the dates our week spans over.
     self.getDates = function () {
       var date = new Date().setISODate(self.dateStr),
           dates = [],
-          dayOffset = 0,
-          tempDate,
+          dayOrder = self.getDayNumberOrder(),
+          dayOffset, tempDate,
           todaysDayNumber = date.getDay();
-  
+
       // Determine how far back in time the first day of the week was.
-      // This is a bit weird, since the current day number might be larger
-      // than the first day number.
-      // If today's number is larger, this is fairly easy.
-      if (todaysDayNumber < self.firstDayOfWeek) {
-        dayOffset = self.firstDayOfWeek - 7 + todaysDayNumber;
-      }
-      // In the other case, we reverse the order of the subtraction.
-      else if (todaysDayNumber > self.firstDayOfWeek) {
-        dayOffset = self.firstDayOfWeek - todaysDayNumber;
-      }
-  
+      // This will enable us to find the correct date of the first day
+      // of the specified week, so we can generate the whole week’s date
+      // based on that.
+      dayOffset = dayOrder.indexOf(todaysDayNumber);
+
       while (dates.length < 7) {
+        // Start with the given date.
         tempDate = new Date().setISODate(self.dateStr);
-  
-        tempDate.setDate(tempDate.getDate() + dayOffset);
-  
+
+        // Subtract the dayOffset to jump back to the day we want,
+        // starting at the first day of the week based on the
+        // calculations above.
+        tempDate.setDate(tempDate.getDate() - dayOffset);
+
         dates.push(tempDate);
-        dayOffset += 1;
+
+        console.log(tempDate.getISODate());
+
+        // Reduce the offset by one to proceed to the next day.
+        dayOffset -= 1;
       }
-  
+
       return dates;
     };
 
     /**
-    * Get the weekdays in the order.
-    *
-    * The day number (0-6) given will be the first. Zero is sunday.
-    */
+     * Get short weekday name in order.
+     */
     self.orderedWeekDays = function () {
       var counter = self.firstDayOfWeek,
           order = [];
