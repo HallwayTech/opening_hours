@@ -313,10 +313,7 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
     }
 
     // Enable the datepicker on the date field.
-    this.$('.date').datepicker({
-      dateFormat: 'yy-mm-dd',
-      firstDay: this.firstDayOfWeek
-    });
+    this.$('.date').datepicker();
 
     // Enable the timeEntry helpers on both time fields.
     this.$('.start_time, .end_time').timeEntry({

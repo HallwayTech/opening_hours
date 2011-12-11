@@ -95,7 +95,7 @@
       format = 'd. MM yy';
     }
 
-    return $.datepicker.formatDate(format, date, Drupal.settings.OpeningHours.formatDate);
+    return $.datepicker.formatDate(format, date);
   };
 
   /**
