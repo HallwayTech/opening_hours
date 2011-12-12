@@ -238,13 +238,14 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
 
     // If we're editing an existing instance.
     if (options.model) {
+      this.newInstance = false;
       this.title = Drupal.t('Edit opening hours instance');
       this.model = options.model;
 
-      this.model.bind('change', this.render);
       this.model.bind('remove', this.remove);
     }
     else {
+      this.newInstance = true;
       this.title = Drupal.t('Add new opening hours instance');
       this.model = new Drupal.OpeningHours.Instance({
         date: this.date.getISODate(),
@@ -283,6 +284,10 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
           view.remove();
           $(wrapper).dialog("destroy").remove();
           view.hasActiveDialog = false;
+
+          // When instance is saved, navigate to it, so the user can see
+          // something has happened.
+          Drupal.OpeningHours.adminApp.navigate('date/' + view.model.get('date'), true);
         });
       };
 
