@@ -87,8 +87,8 @@
   };
 
   /**
-  * Format a date.
-  */
+   * Format a date.
+   */
   Drupal.OpeningHours.formatDate = function (date, format) {
     // Default format.
     if (!format) {
@@ -99,11 +99,11 @@
   };
 
   /**
-  * Format a date range.
-  *
-  * Filters the range down to the significant parts, so only the things
-  * that are different are shown in the first part of the range.
-  */
+   * Format a date range.
+   *
+   * Filters the range down to the significant parts, so only the things
+   * that are different are shown in the first part of the range.
+   */
   Drupal.OpeningHours.formatDateRange = function (date1, date2) {
     var d1 = {
           year: date1.getFullYear(),
