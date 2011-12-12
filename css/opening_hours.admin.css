@@ -52,7 +52,8 @@
 }
 
 #opening-hours-admin .admin-main-view .day-view {
-  min-height: 100px;
+  min-height: 3em;
+  height: 3em;
 }
 
 #oho-instance-edit-form fieldset {
