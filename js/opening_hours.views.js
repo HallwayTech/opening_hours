@@ -310,6 +310,9 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
               view.remove();
               $(wrapper).dialog("destroy").remove();
               view.hasActiveDialog = false;
+
+              // Navigate to the date to show the change.
+              Drupal.OpeningHours.adminApp.navigate('date/' + view.model.get('date'), true);
             }
           });
 
