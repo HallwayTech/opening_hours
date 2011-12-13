@@ -40,6 +40,10 @@ function opening_hours_crud_api_page() {
 
       if (drupal_write_record('opening_hours', $instance) === SAVED_NEW) {
         $output[] = $instance;
+
+        if (!empty($instance->repeat_rule)) {
+          opening_hours_repeat_instance_propagate($instance);
+        }
       }
 
       break;

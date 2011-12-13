@@ -50,15 +50,26 @@
 <script type="text/template" id="oho-instance-edit-template">
   <form action="." id="oho-instance-edit-form">
     <fieldset class="date-time">
-      <input type="text" class="date text" size="9" title="<?php print t('Date'); ?>" value="<%= date %>" />
+      <input type="text" class="date text" size="9" title="<?php print t('Date'); ?>" value="<%= date %>" <% if (!isNew) { %>disabled="disabled"<% } %> />
       <input type="text" class="start_time text" size="7" title="<?php print t('Start time'); ?>" value="<%= start_time %>" />
       to
       <input type="text" class="end_time text" size="7" title="<?php print t('End time'); ?>" value="<%= end_time %>" />
     </fieldset>
 
-    <fieldset class="description">
+    <fieldset class="repeat">
+      <label for="oho-repeat-rule"><?php print t('Repeat'); ?></label>
+      <select name="oho-repeat-rule" id="oho-repeat-rule">
+        <option value="">never</option>
+        <option value="weekly">every week</option>
+      </select>
+
+      <label class="end" for="oho-repeat-end-date"><?php print t('until'); ?></label>
+      <input type="text" class="text end repeat-end-date" name="oho-repeat-end-date" id="oho-repeat-end-date" size="9" title="<?php print t('End date'); ?>" value="<%= repeat_end_date %>" />
+    </fieldset>
+
+    <fieldset class="details">
       <label for="oho-notice"><?php print t('Notice'); ?></label>
-      <input type="text" class="notice text" name="oho-notice" id="oho-notice" title="<?php print t('What’s special about this instance?'); ?>" value="<%= notice %>" />
+      <input type="text" class="notice text" name="oho-notice" id="oho-notice" title="<?php print t('What’s special about this instance?'); ?>" size="60" value="<%= notice %>" />
     </fieldset>
 
   </form>

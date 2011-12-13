@@ -245,11 +245,20 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
       this.model.bind('remove', this.remove);
     }
     else {
+      // Default repeat end date is in six months.
+      var endDate = new Date();
+      endDate.setTime(this.date.getTime());
+      endDate.setMonth(endDate.getMonth() + 6);
+
       this.newInstance = true;
       this.title = Drupal.t('Add new opening hours instance');
+
+      // Make up a new instance.
       this.model = new Drupal.OpeningHours.Instance({
         date: this.date.getISODate(),
-        nid: this.nid
+        nid: this.nid,
+        // Standard repeat ends in six months.
+        repeat_end_date: endDate.getISODate()
       });
     }
   },
@@ -257,13 +266,16 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
   render: function (options) {
     var buttons = {}, dialogInstance,
         model = this.model,
+        today = new Date(),
         view = this;
 
     // Render the editing form from the template.
     $(this.el).html(this.template({
+      isNew: model.isNew(),
       date: model.get('date'),
       start_time: Drupal.OpeningHours.formatTime(model.get('start_time')),
       end_time: Drupal.OpeningHours.formatTime(model.get('end_time')),
+      repeat_end_date: model.get('repeat_end_date'),
       notice: model.get('notice')
     }));
 
@@ -326,6 +338,7 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
           buttons: buttons,
           close: function () { view.remove(); },
           draggable: false,
+          height: 350,
           modal: true,
           resizable: false,
           title: this.title,
@@ -337,6 +350,30 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
 
     // Enable the datepicker on the date field.
     this.$('.date').datepicker();
+
+    // Set the repeat value and configure bindings for hiding/showing
+    // the end date based on the repeat setting.
+    this.$('.repeat select')
+      .val(view.model.get('repeat_rule'));
+
+    this.$('.repeat select')
+      .change(function () {
+        var $elem = $(this);
+
+        if ($elem.val() === 'weekly') {
+          $elem.siblings('.end').fadeIn();
+        }
+        else {
+          $elem.siblings('.end').fadeOut();
+        }
+      })
+      .change();
+
+    // Repeat end date must be between today and in two years.
+    this.$('.repeat-end-date').datepicker({
+      minDate: today,
+      maxDate: new Date().setFullYear(today.getFullYear + 2)
+    });
 
     // Enable the timeEntry helpers on both time fields.
     this.$('.start_time, .end_time').timeEntry({
@@ -355,6 +392,8 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
       date: form.find('.date').val(),
       start_time: form.find('.start_time').val(),
       end_time: form.find('.end_time').val(),
+      repeat_rule: form.find('.repeat select').val(),
+      repeat_end_date: form.find('.repeat-end-date').val(),
       notice: form.find('.notice').val()
     }, {
       error: {

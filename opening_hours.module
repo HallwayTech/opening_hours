@@ -153,6 +153,59 @@ function opening_hours_instance_prepare($instance) {
 }
 
 /**
+ * Propagates a repeating instance.
+ *
+ * Makes copies of the event each time it repeats until either the
+ * repeat rule ends or two years have passed.
+ */
+function opening_hours_repeat_instance_propagate(&$instance) {
+  // Maximum limit is two years in the future.
+  $limit = new DateTime();
+  $limit->add(new DateInterval('P2Y'));
+
+  // Set up the increment for the repeat rule.
+  if ($instance->repeat_rule == 'weekly') {
+    $increment = new DateInterval('P1W');
+  }
+
+  if (!empty($instance->repeat_end_date)) {
+    $end_date = new DateTime($instance->repeat_end_date);
+
+    // If the end date is before the limit, it becomes the new limit.
+    if ($end_date && $end_date < $limit) {
+      $limit = $end_date;
+    }
+  }
+
+  // Bail if we don't have an increment.
+  if (!($increment instanceOf DateInterval)) {
+    return;
+  }
+
+  $current_date = new DateTime($instance->date);
+  while ($current_date < $limit) {
+    $current_date->add($increment);
+
+    // Generate the new propagated instance.
+    $propagated = (object) array(
+      'nid' => $instance->nid,
+      'date' => $current_date->format('Y-m-d'),
+      'start_time' => $instance->start_time,
+      'end_time' => $instance->end_time,
+      'original_instance_id' => $instance->instance_id,
+      'customised' => 0,
+    );
+
+    // Propagate the notice, if set.
+    if (!empty($instance->notice)) {
+      $propagated->notice = $instance->notice;
+    }
+
+    drupal_write_record('opening_hours', $propagated);
+  }
+}
+
+/**
  * Helper function to load our JavaScript dependencies.
  */
 function opening_hours_add_js($type = 'presentation', $nid = FALSE) {

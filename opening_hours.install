@@ -56,6 +56,12 @@ function opening_hours_schema() {
         'type' => 'varchar',
         'length' => 255,
       ),
+      'repeat_end_date' => array(
+        'description' => 'The date the repeating rule ends.',
+        'type' => 'text',
+        'pgsql_type' => 'date',
+        'mysql_type' => 'date',
+      ),
       'original_instance_id' => array(
         'description' => 'The {opening_hours}.instance_id for the original instance, which this instance is a repeat of.', 
         'type' => 'int', 

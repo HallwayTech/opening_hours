@@ -70,13 +70,21 @@
   border-color: #4d90fe;
 }
 
-#oho-instance-edit-form label {
-  display: block;
-  margin-bottom: 0.25em;
+#oho-instance-edit-form fieldset {
+  border-bottom: 1px solid #eee;
+  margin-right: 1em;
+  padding-bottom: 1.5em;
+  padding-top: 0.5em;
+  width: 550px;
 }
 
-#oho-instance-edit-form .notice {
-  width: 90%;
+#oho-instance-edit-form label {
+  font-weight: normal;
+}
+
+#oho-instance-edit-form .details label {
+  display: block;
+  margin-bottom: 0.25em;
 }
 
 .ui-dialog-overlay {
