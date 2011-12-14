@@ -209,8 +209,8 @@ Drupal.OpeningHours.InstanceDisplayView = Backbone.View.extend({
     var model = this.model;
 
     $(this.el).html(this.template({
-      start_time: Drupal.OpeningHours.formatTime(model.get('start_time')),
-      end_time: Drupal.OpeningHours.formatTime(model.get('end_time')),
+      start_time: model.get('start_time'),
+      end_time: model.get('end_time'),
       notice: model.get('notice')
     }));
 
@@ -273,8 +273,8 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
     $(this.el).html(this.template({
       isNew: model.isNew(),
       date: model.get('date'),
-      start_time: Drupal.OpeningHours.formatTime(model.get('start_time')),
-      end_time: Drupal.OpeningHours.formatTime(model.get('end_time')),
+      start_time: model.get('start_time'),
+      end_time: model.get('end_time'),
       repeat_end_date: model.get('repeat_end_date'),
       notice: model.get('notice')
     }));

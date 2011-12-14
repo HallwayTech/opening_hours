@@ -10,8 +10,7 @@
 
   // Sunday is either the zeroeth or seventh day of the week, depending
   // oun the current locale.
-  var timeMatcher = /([0-2]?\d):([0-5]?\d)/,
-      weekdays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+  var weekdays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
   Drupal.OpeningHours.Week = function (dateStr, firstDayOfWeek) {
     var self = this;
@@ -141,19 +140,6 @@
         Drupal.OpeningHours.formatDate(date1),
         Drupal.OpeningHours.formatDate(date2)
       ];
-    }
-  };
-
-  /**
-   * Format a time.
-   *
-   * Basicallly amounts to chopping off the seconds-part, if applicable.
-   */
-  Drupal.OpeningHours.formatTime = function (time) {
-    var match = timeMatcher.exec(time);
-
-    if (match) {
-      return match[1] + ':' + match[2];
     }
   };
 

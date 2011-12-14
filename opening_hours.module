@@ -149,7 +149,24 @@ function opening_hours_instance_prepare($instance) {
   // Backbone expects the primary key to be named `id`. Let's not disappoint.
   $instance->id = $instance->instance_id;
 
+  $instance->start_time = opening_hours_format_time($instance->start_time);
+  $instance->end_time = opening_hours_format_time($instance->end_time);
+
   return $instance;
+}
+
+/**
+ * Format a time value from the database, stripping the seconds.
+ */
+function opening_hours_format_time($time) {
+  $matches = array();
+  preg_match('/^([0-2]?\d):([0-5]?\d)/', $time, $matches);
+
+  if (!empty($matches[1]) && !empty($matches[2])) {
+    return $matches[1] . ':' . $matches[2];
+  }
+
+  return NULL;
 }
 
 /**
