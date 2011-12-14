@@ -289,7 +289,7 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
     // If we don't have the editing dialog open already, create it.
     if (!this.hasActiveDialog) {
       // Configure buttons for the dialog.
-      buttons[Drupal.t('Save')] = function () {
+      buttons[Drupal.t('Save')] = function (changed) {
         var wrapper = this;
 
         view.saveInstance(function () {
@@ -297,9 +297,11 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
           $(wrapper).dialog("destroy").remove();
           view.hasActiveDialog = false;
 
-          // When instance is saved, navigate to it, so the user can see
-          // something has happened.
-          Drupal.OpeningHours.adminApp.navigate('date/' + view.model.get('date'), true);
+          if (changed) {
+            // When instance is saved, navigate to it, so the user can see
+            // something has happened.
+            Drupal.OpeningHours.adminApp.navigate('date/' + view.model.get('date'), true);
+          }
         });
       };
 
@@ -386,16 +388,31 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
   },
 
   saveInstance: function (successCallback) {
-    var form = this.$('form');
+    var changedAttributes,
+        form = this.$('form'),
+        formValues = {
+          start_time: form.find('.start_time').val(),
+          end_time: form.find('.end_time').val(),
+          repeat_rule: form.find('.repeat select').val(),
+          repeat_end_date: form.find('.repeat-end-date').val(),
+          notice: form.find('.notice').val()
+        };
 
-    this.model.save({
-      date: form.find('.date').val(),
-      start_time: form.find('.start_time').val(),
-      end_time: form.find('.end_time').val(),
-      repeat_rule: form.find('.repeat select').val(),
-      repeat_end_date: form.find('.repeat-end-date').val(),
-      notice: form.find('.notice').val()
-    }, {
+    // Only allow changing the date for new instances.
+    if (this.newInstance) {
+      formValues.date = form.find('.date').val();
+    }
+
+    // Figure out which field values have actually changed.
+    changedAttributes = this.model.changedAttributes(formValues);
+
+    // If our data hasn't changed, changedAttributes will be false.
+    // In this case, just call our success callback.
+    if (!changedAttributes) {
+      return successCallback(false);
+    }
+
+    this.model.save(formValues, {
       error: {
         // TODO: Handle this.
       },
