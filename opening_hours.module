@@ -183,6 +183,23 @@ function opening_hours_repeat_instance_propagate(&$instance) {
   }
 
   $current_date = new DateTime($instance->date);
+
+  // Figure out how far the instance has already been propagated, and
+  // start there.
+  $start_point_date = db_result(db_query(
+    'SELECT MAX(date) FROM opening_hours WHERE original_instance_id = %d'
+  , array(':id' => $instance->instance_id)));
+
+  if ($start_point_date) {
+    $start_point_date = new DateTime($start_point_date);
+
+    // If our start point is later than the current date, use that when
+    // iterating, so we don't generate duplicate entries.
+    if ($start_point_date > $current_date) {
+      $current_date = $start_point_date;
+    }
+  }
+
   while ($current_date < $limit) {
     $current_date->add($increment);
 
