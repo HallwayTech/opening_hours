@@ -231,9 +231,6 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
     this.date = options.date || new Date();
     this.firstDayOfWeek = options.firstDayOfWeek;
 
-    // To avoid opening multiple dialogs when the model is updated.
-    this.hasActiveDialog = false;
-
     this.nid = options.nid;
 
     // If we're editing an existing instance.
@@ -261,6 +258,20 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
         repeat_end_date: endDate.getISODate()
       });
     }
+
+    return this;
+  },
+
+  // Close dialogs and remove view from DOM.
+  remove: function () {
+    $(this.el).remove();
+
+    if (this.dialogInstance){
+      this.dialogInstance.dialog("destroy").remove();
+      this.dialogInstance = null;
+    }
+
+    return this;
   },
 
   render: function (options) {
@@ -287,23 +298,9 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
     });
 
     // If we don't have the editing dialog open already, create it.
-    if (!this.hasActiveDialog) {
+    if (!this.dialogInstance) {
       // Configure buttons for the dialog.
-      buttons[Drupal.t('Save')] = function (changed) {
-        var wrapper = this;
-
-        view.saveInstance(function () {
-          view.remove();
-          $(wrapper).dialog("destroy").remove();
-          view.hasActiveDialog = false;
-
-          if (changed) {
-            // When instance is saved, navigate to it, so the user can see
-            // something has happened.
-            Drupal.OpeningHours.adminApp.navigate('date/' + view.model.get('date'), true);
-          }
-        });
-      };
+      buttons[Drupal.t('Save')] = this.saveButton;
 
       buttons[Drupal.t('Discard changes')] = function () {
         view.remove();
@@ -334,7 +331,7 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
         };
       }
 
-      dialogInstance = $('<div></div>')
+      this.dialogInstance = $('<div></div>')
         .html(this.el)
         .dialog({
           buttons: buttons,
@@ -346,8 +343,6 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
           title: this.title,
           width: 600
         });
-
-      this.hasActiveDialog = true;
     }
 
     // Enable the datepicker on the date field.
@@ -387,7 +382,8 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
     return this;
   },
 
-  saveInstance: function (successCallback) {
+  // Callback for when the save button is pressed.
+  saveButton: function () {
     var changedAttributes,
         form = this.$('form'),
         formValues = {
@@ -407,17 +403,31 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
     changedAttributes = this.model.changedAttributes(formValues);
 
     // If our data hasn't changed, changedAttributes will be false.
-    // In this case, just call our success callback.
+    // In this case, do nothing;
     if (!changedAttributes) {
-      return successCallback(false);
+      return this;
     }
 
+    // Save the data via Backbone.sync.
     this.model.save(formValues, {
       error: {
         // TODO: Handle this.
       },
-      success: successCallback
+      success: this.saveSucceeded
     });
+
+    return this;
+  },
+
+  // Callback for when a save succeeds.
+  saveSucceeded: function () {
+    // When instance is saved, navigate to it, so the user can see
+    // something has happened.
+    Drupal.OpeningHours.adminApp.navigate('date/' + this.model.get('date'), true);
+
+    this.remove();
+
+    return this;
   }
 });
 
