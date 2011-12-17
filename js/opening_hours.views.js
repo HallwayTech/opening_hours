@@ -266,6 +266,11 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
   remove: function () {
     $(this.el).remove();
 
+    if (this.confirmationDialog){
+      this.confirmationDialog.remove();
+      this.confirmationDialog = null;
+    }
+
     if (this.dialogInstance){
       this.dialogInstance.dialog("destroy").remove();
       this.dialogInstance = null;
@@ -275,7 +280,7 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
   },
 
   render: function (options) {
-    var buttons = {}, dialogInstance,
+    var buttons = {},
         model = this.model,
         today = new Date(),
         view = this;
@@ -384,8 +389,7 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
 
   // Callback for when the save button is pressed.
   saveButton: function () {
-    var changedAttributes,
-        form = this.$('form'),
+    var form = this.$('form'),
         formValues = {
           start_time: form.find('.start_time').val(),
           end_time: form.find('.end_time').val(),
@@ -400,23 +404,45 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
     }
 
     // Figure out which field values have actually changed.
-    changedAttributes = this.model.changedAttributes(formValues);
+    this.changedAttributes = this.model.changedAttributes(formValues);
 
     // If our data hasn't changed, changedAttributes will be false.
     // In this case, do nothing;
-    if (!changedAttributes) {
+    if (!this.changedAttributes) {
       return this;
     }
 
+    // If we're changing a repeating event, we want to get confirmation
+    // from the user first.
+    if (!this.model.isNew() && this.model.get('repeat_rule')) {
+      this.confirmationDialog = new Drupal.OpeningHours.DialogView({
+        changedAttributes: this.changedAttributes,
+        content: Drupal.t("You are changing the root instance of a repeating series. These changes will be applied to the entire series."),
+        model: this.model,
+        title: Drupal.t('Change root instance?')
+      });
+      
+      this.confirmationDialog.addButton(Drupal.t('Apply changes'), this.saveData);
+      this.confirmationDialog.addButton(Drupal.t('Cancel'), this.remove);
+
+      this.confirmationDialog.render();
+    }
+    else {
+      // Just save the data, no questions asked.
+      this.saveData();
+    }
+
+    return this;
+  },
+
+  saveData: function () {
     // Save the data via Backbone.sync.
-    this.model.save(formValues, {
+    this.model.save(this.changedAttributes, {
       error: {
         // TODO: Handle this.
       },
       success: this.saveSucceeded
     });
-
-    return this;
   },
 
   // Callback for when a save succeeds.
@@ -426,6 +452,51 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
     Drupal.OpeningHours.adminApp.navigate('date/' + this.model.get('date'), true);
 
     this.remove();
+
+    return this;
+  }
+});
+
+Drupal.OpeningHours.DialogView = Backbone.View.extend({
+  className: "dialog-view",
+
+  initialize: function (options) {
+    _.bindAll(this);
+
+    this.dialogOptions = {
+      buttons: {},
+      close: this.remove,
+      draggable: false,
+      modal: true,
+      resizable: false,
+      title: options.title,
+    };
+
+    this.options = options;
+  },
+
+  addButton: function (title, callback) {
+    this.dialogOptions.buttons[title] = callback;
+
+    return this;
+  },
+
+  // Close dialogs and remove view from DOM.
+  remove: function () {
+    $(this.el).remove();
+
+    if (this.dialogInstance){
+      this.dialogInstance.dialog("destroy").remove();
+      this.dialogInstance = null;
+    }
+
+    return this;
+  },
+
+  render: function () {
+    this.dialogInstance = $(this.make('div', this.className, this.options.content));
+    this.dialogInstance.appendTo($(this.el));
+    this.dialogInstance.dialog(this.dialogOptions);
 
     return this;
   }
