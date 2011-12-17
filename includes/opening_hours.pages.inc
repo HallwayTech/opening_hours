@@ -118,9 +118,11 @@ function _opening_hours_get_instance_from_request() {
  * Also updates propagated copies, if applicable.
  *
  * @param stdClass $instance
- *   The update instance object.
+ *   The updated instance object.
  * @param stdClass $original
  *   Original instance data as currently stored in the database.
+ * @return stdClass
+ *   Returns $instance.
  */
 function _opening_hours_instance_update($instance, $original) {
   $query = db_query("
@@ -134,5 +136,7 @@ function _opening_hours_instance_update($instance, $original) {
     ':id' => $instance->instance_id,
     ':id2' => $instance->instance_id,
   ));
+
+  return $instance;
 }
 
