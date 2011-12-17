@@ -39,6 +39,8 @@ function opening_hours_crud_api_page() {
       }
 
       if (drupal_write_record('opening_hours', $instance) === SAVED_NEW) {
+        header('HTTP/1.1 201 Created');
+        header('Location: ' . url('opening_hours/instances/' .  $instance->instance_id));
         $output[] = $instance;
 
         if (!empty($instance->repeat_rule)) {
