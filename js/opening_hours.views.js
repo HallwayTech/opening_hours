@@ -424,11 +424,12 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
 
   // Callback for when a save succeeds.
   saveSucceeded: function () {
+    this.remove();
+
     // When instance is saved, navigate to it, so the user can see
     // something has happened.
-    Drupal.OpeningHours.adminApp.navigate('date/' + this.model.get('date'), true);
-
-    this.remove();
+    Drupal.OpeningHours.adminApp.navigate('date/' + this.model.get('date'));
+    window.location.reload();
 
     return this;
   },
@@ -444,7 +445,8 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
         view.remove();
 
         // Navigate to the date to show the change.
-        Drupal.OpeningHours.adminApp.navigate('date/' + view.model.get('date'), true);
+        Drupal.OpeningHours.adminApp.navigate('date/' + view.model.get('date'));
+        window.location.reload();
       }
     });
 
