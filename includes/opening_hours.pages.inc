@@ -88,7 +88,7 @@ function opening_hours_instance_id_api_page($instance) {
       $output[] = _opening_hours_instance_update($updated_instance, $instance);
       break;
     case 'DELETE':
-      db_query('DELETE FROM {opening_hours} WHERE instance_id = %d', $instance->instance_id);
+      _opening_hours_instance_delete($instance);
       break;
   }
 
@@ -138,5 +138,23 @@ function _opening_hours_instance_update($instance, $original) {
   ));
 
   return $instance;
+}
+
+/**
+ * Helper function to delete an existing instance.
+ *
+ * Also deletes propagated copies, if applicable.
+ *
+ * @param stdClass $instance
+ *   The update instance object.
+ */
+function _opening_hours_instance_delete($instance, $original) {
+  $query = db_query("
+    DELETE FROM {opening_hours} 
+    WHERE instance_id = %d OR original_instance_id = %d
+  ", array(
+    ':id' => $instance->instance_id,
+    ':id2' => $instance->instance_id,
+  ));
 }
 
