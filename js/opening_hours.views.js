@@ -271,9 +271,9 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
       this.confirmationDialog = null;
     }
 
-    if (this.dialogInstance){
-      this.dialogInstance.dialog("destroy").remove();
-      this.dialogInstance = null;
+    if (this.editFormDialog){
+      this.editFormDialog.remove();
+      this.editFormDialog = null;
     }
 
     return this;
@@ -284,6 +284,11 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
         model = this.model,
         today = new Date(),
         view = this;
+
+    // If the form is already open, bail out.
+    if (this.editFormDialog) {
+      return this;
+    }
 
     // Render the editing form from the template.
     $(this.el).html(this.template({
@@ -302,53 +307,25 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
       }
     });
 
-    // If we don't have the editing dialog open already, create it.
-    if (!this.dialogInstance) {
-      // Configure buttons for the dialog.
-      buttons[Drupal.t('Save')] = this.saveButton;
+    // Create the editing form dialog.
+    this.editFormDialog = new Drupal.OpeningHours.DialogView({
+      content: this.el,
+      dialogOptions: {
+        height: 350,
+        width: 600
+      },
+      title: this.title,
+    });
 
-      buttons[Drupal.t('Discard changes')] = function () {
-        view.remove();
-        $(this).dialog("destroy").remove();
-        view.hasActiveDialog = false;
-      };
+    this.editFormDialog.addButton(Drupal.t('Save'), this.saveButton);
+    this.editFormDialog.addButton(Drupal.t('Discard changes'), this.remove);
 
-      // For existing instances, we also offer a delete button.
-      if (this.model.id) {
-        buttons[Drupal.t('Delete this instance')] = function () {
-          var wrapper = this;
-
-          view.model.destroy({
-            error: function () {
-              console.log('fail');
-            },
-            success: function () {
-              view.remove();
-              $(wrapper).dialog("destroy").remove();
-              view.hasActiveDialog = false;
-
-              // Navigate to the date to show the change.
-              Drupal.OpeningHours.adminApp.navigate('date/' + view.model.get('date'), true);
-            }
-          });
-
-          return false;
-        };
-      }
-
-      this.dialogInstance = $('<div></div>')
-        .html(this.el)
-        .dialog({
-          buttons: buttons,
-          close: function () { view.remove(); },
-          draggable: false,
-          height: 350,
-          modal: true,
-          resizable: false,
-          title: this.title,
-          width: 600
-        });
+    // For existing instances, we also offer a delete button.
+    if (this.model.id) {
+      this.editFormDialog.addButton(Drupal.t('Delete this instance'), this.deleteButton);
     }
+
+    this.editFormDialog.render();
 
     // Enable the datepicker on the date field.
     this.$('.date').datepicker();
@@ -454,6 +431,24 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
     this.remove();
 
     return this;
+  },
+
+  deleteButton: function () {
+    var view = this;
+
+    this.model.destroy({
+      error: function () {
+        console.log('fail');
+      },
+      success: function () {
+        view.remove();
+
+        // Navigate to the date to show the change.
+        Drupal.OpeningHours.adminApp.navigate('date/' + view.model.get('date'), true);
+      }
+    });
+
+    return false;
   }
 });
 
@@ -471,6 +466,11 @@ Drupal.OpeningHours.DialogView = Backbone.View.extend({
       resizable: false,
       title: options.title,
     };
+
+    // If the caller provided dialog options, merge them into our defaults.
+    if (options.dialogOptions) {
+      _.extend(this.dialogOptions, options.dialogOptions);
+    }
 
     this.options = options;
   },
