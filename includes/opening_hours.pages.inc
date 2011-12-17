@@ -85,10 +85,7 @@ function opening_hours_instance_id_api_page($instance) {
         exit('Instance ID mismatch.');
       }
 
-      if (drupal_write_record('opening_hours', $updated_instance, array('instance_id')) === SAVED_UPDATED) {
-        $output[] = $updated_instance;
-      }
-
+      $output[] = _opening_hours_instance_update($updated_instance, $instance);
       break;
     case 'DELETE':
       db_query('DELETE FROM {opening_hours} WHERE instance_id = %d', $instance->instance_id);
@@ -113,5 +110,29 @@ function _opening_hours_get_instance_from_request() {
   }
 
   return $instance;
+}
+
+/**
+ * Helper function to update an existing instance.
+ *
+ * Also updates propagated copies, if applicable.
+ *
+ * @param stdClass $instance
+ *   The update instance object.
+ * @param stdClass $original
+ *   Original instance data as currently stored in the database.
+ */
+function _opening_hours_instance_update($instance, $original) {
+  $query = db_query("
+    UPDATE {opening_hours} 
+    SET start_time = '%s', end_time = '%s', notice = '%s'
+    WHERE instance_id = %d OR original_instance_id = %d
+  ", array(
+    ':start' => $instance->start_time,
+    ':end' => $instance->end_time,
+    ':notice' => $instance->notice,
+    ':id' => $instance->instance_id,
+    ':id2' => $instance->instance_id,
+  ));
 }
 
