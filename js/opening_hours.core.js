@@ -143,5 +143,16 @@
     }
   };
 
+  // Configure the datepicker when the document is ready.
+  $(function () {
+    $.datepicker.setDefaults({
+      changeMonth: true,
+      changeYear: true,
+      dayNames: Drupal.settings.OpeningHours.formatDate.dayNames,
+      dateFormat: 'yy-mm-dd',
+      firstDay: Drupal.settings.OpeningHours.firstDayOfWeek,
+      monthNames: Drupal.settings.OpeningHours.formatDate.monthNames
+    });
+  });
 }());
 
