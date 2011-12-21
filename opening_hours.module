@@ -45,6 +45,30 @@ function opening_hours_menu() {
 }
 
 /**
+ * Implements hook_block().
+ */
+function opening_hours_block($op = 'list', $delta = 0, $edit = array()) {
+  switch ($op) {
+    case 'list':
+      return array(
+        'week' => array(
+          'info' => t('Opening hours for node by week'),
+          'cache' => BLOCK_NO_CACHE,
+        ),
+      );
+      break;
+      case 'view':
+        $block = new stdClass;
+        if ($node = menu_get_object()) {
+          $block->title = t('Opening hours');
+          $block->content = theme('opening_hours_' . $delta, $node);
+        }
+
+        return $block;
+  }
+}
+
+/**
  * Implements hook_form_FORM_ID_alter().
  *
  * We add our own fieldset to the node settings form, so the user can
@@ -83,6 +107,16 @@ function opening_hours_theme($existing, $type, $theme, $path) {
       'arguments' => array(),
       'path' => $path . '/templates',
       'template' => 'opening_hours_admin',
+    ),
+    'opening_hours_presentation' => array(
+      'arguments' => array(),
+      'path' => $path . '/templates',
+      'template' => 'opening_hours_presentation',
+    ),
+    'opening_hours_week' => array(
+      'arguments' => array('node' => NULL),
+      'path' => $path . '/templates',
+      'template' => 'opening_hours_week',
     ),
   );
 }
@@ -310,5 +344,22 @@ function opening_hours_add_js($type = 'presentation', $nid = FALSE) {
   }
 
   drupal_add_js(array('OpeningHours' => $settings), 'setting');
+}
+
+/**
+ * Preprocess variables for the week template.
+ */
+function template_preprocess_opening_hours_week(&$vars) {
+  static $once;
+
+  // Only add JavaScript and templates the first time this is run on a page.
+  if (!$once) {
+    opening_hours_add_js();
+
+    // Add our client-side templates to the page.
+    $vars['preface'] = theme('opening_hours_presentation');
+
+    $once = TRUE;
+  }
 }
 
