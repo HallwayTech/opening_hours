@@ -112,7 +112,7 @@
 
           daysContainer.append(self.options.dayTemplate({
             name: $.datepicker.formatDate('DD', date),
-            instances: renderedInstances.join("") || Drupal.t('Closed')
+            instances: renderedInstances.join("") || Drupal.t('closed')
           }));
         });
         

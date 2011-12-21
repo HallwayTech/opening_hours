@@ -354,6 +354,7 @@ function template_preprocess_opening_hours_week(&$vars) {
 
   // Only add JavaScript and templates the first time this is run on a page.
   if (!$once) {
+    drupal_add_css(drupal_get_path('module', 'opening_hours') . '/css/opening_hours.theme.css');
     opening_hours_add_js();
 
     // Add our client-side templates to the page.
