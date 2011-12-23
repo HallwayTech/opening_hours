@@ -27,7 +27,12 @@
       success: function (data) {
         // Set up an empty dataStore array for each day in the week for each nid.
         _.each(nids, function (nid) {
-          options.dataStore[nid] = {};
+
+          // Make sure we have an object ready for each nid.
+          if (!options.dataStore[nid]) {
+            options.dataStore[nid] = {};
+          }
+
           _.each(options.week.dates, function (date) {
             options.dataStore[nid][date.getISODate()] = [];
           });
