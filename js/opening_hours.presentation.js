@@ -156,6 +156,26 @@
             instances: renderedInstances.join("") || Drupal.t('closed')
           }));
         });
+
+        // Convert all notices to Tipsy tooltips.
+        self.el.find('.notice').each(function () {
+          var $notice = $(this),
+              message = $notice.text();
+
+          if (message) {
+            // Replace the notice with a star, and add a class for
+            // styling that.
+            $notice.text('*');
+            $notice.addClass('notice-star');
+
+            $notice.parent('.instance').attr('title', message).tipsy({
+              fade: true
+            });
+          }
+          else {
+            $notice.remove();
+          }
+        });
         
         // Fade back in when we're done rendering.
         self.el.fadeIn('fast');
