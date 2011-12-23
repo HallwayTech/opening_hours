@@ -21,3 +21,4 @@
     <span class="notice"><%= notice %></span>
   </div>
 </script>
+

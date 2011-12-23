@@ -50,8 +50,16 @@ function opening_hours_crud_api_page() {
 
       break;
     case 'GET':
-      if (!empty($_REQUEST['from_date']) && !empty($_REQUEST['to_date']) && !empty($_REQUEST['nid'])) {
-        $output = opening_hours_instance_load_multiple($_REQUEST['nid'], $_REQUEST['from_date'], $_REQUEST['to_date']);
+      // The nid parameter might be an array. If it's a single value, it
+      // should still pass these filters with no trouble.
+      // In any case, we want to elimitate bogus values, to see if
+      // there's anything left to fetch.
+      $nids = explode(',', $_REQUEST['nid']);
+      array_filter($nids, is_numeric);
+      array_filter($nids);
+
+      if (!empty($_REQUEST['from_date']) && !empty($_REQUEST['to_date']) && !empty($nids)) {
+        $output = opening_hours_instance_load_multiple($nids, $_REQUEST['from_date'], $_REQUEST['to_date']);
       }
   }
 

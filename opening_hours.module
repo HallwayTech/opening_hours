@@ -154,11 +154,20 @@ function opening_hours_instance_load($instance_id) {
 /**
  * Load opening hours instances by nid and date.
  */
-function opening_hours_instance_load_multiple($nid, $from_date, $to_date) {
+function opening_hours_instance_load_multiple($nids, $from_date, $to_date) {
+  // Make sure nids is an array.
+  if (!is_array($nids)) {
+    $nids = array($nids);
+  }
+
+  // Filter nids, so we don't pass nasty things to the database.
+  array_filter($nids, is_numeric);
+  array_filter($nids);
+
   $query = db_query("
-    SELECT * FROM opening_hours WHERE nid = %d AND date BETWEEN '%s' AND '%s'
+    SELECT * FROM opening_hours WHERE nid IN (" . implode(',', $nids) . ")
+    AND date BETWEEN '%s' AND '%s'
   ", array(
-    ':nid' => $nid,
     ':from_date' => $from_date,
     ':to_date' => $to_date,
   ));
