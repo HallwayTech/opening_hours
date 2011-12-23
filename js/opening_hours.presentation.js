@@ -240,6 +240,9 @@
           _.invoke(presentationViews, 'render');
         }
       });
+
+      // Let anyone who cares know that we're done loading and ready for business.
+      $(window).trigger('OpeningHoursLoaded');
     }
 
   });
