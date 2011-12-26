@@ -5,11 +5,13 @@
 
 (function ($) {
   "use strict";
+  
+  // Global container for Opening Hours data.
+  Drupal.OpeningHours.dataStore = {};
 
   // Get instance data from the server via AJAX.
   Drupal.OpeningHours.getInstances = function (options) {
-    var datastore = options.datastore || {},
-        nids = options.nids;
+    var nids = options.nids;
 
     // If just a single nid was given, wrap it in an array, so we can
     // treat it uniformly below.
@@ -29,18 +31,18 @@
         _.each(nids, function (nid) {
 
           // Make sure we have an object ready for each nid.
-          if (!options.dataStore[nid]) {
-            options.dataStore[nid] = {};
+          if (!Drupal.OpeningHours.dataStore[nid]) {
+            Drupal.OpeningHours.dataStore[nid] = {};
           }
 
           _.each(options.week.dates, function (date) {
-            options.dataStore[nid][date.getISODate()] = [];
+            Drupal.OpeningHours.dataStore[nid][date.getISODate()] = [];
           });
         });
 
         // Store the received data in the dataStore.
         _.each(data, function (instance) {
-          options.dataStore[instance.nid][instance.date].push(instance);
+          Drupal.OpeningHours.dataStore[instance.nid][instance.date].push(instance);
         });
 
         if (options.success) {
@@ -56,7 +58,6 @@
     var self = this;
 
     self.constructor = function () {
-      self.dataStore = {};
       self.el = $(options.el);
       self.nid = options.nid;
       self.options = options;
@@ -76,15 +77,14 @@
 
       // If the data is already in the data store, invoke the callback
       // immediately and return.
-      if (self.dataStore[self.nid] &&
-          _.isArray(self.dataStore[self.nid][from_date]) &&
-          _.isArray(self.dataStore[self.nid][to_date])) {
+      if (Drupal.OpeningHours.dataStore[self.nid] &&
+          _.isArray(Drupal.OpeningHours.dataStore[self.nid][from_date]) &&
+          _.isArray(Drupal.OpeningHours.dataStore[self.nid][to_date])) {
         callback();
         return self;
       }
 
       Drupal.OpeningHours.getInstances({
-        dataStore: self.dataStore,
         from_date: from_date,
         nid: self.nid,
         to_date: to_date,
@@ -145,7 +145,7 @@
               renderedInstances = [];
 
           // Render each instance for this day.
-          _.each(self.dataStore[self.nid][dateStr], function (instance) {
+          _.each(Drupal.OpeningHours.dataStore[self.nid][dateStr], function (instance) {
             renderedInstances.push(self.options.instanceTemplate({
               start_time: instance.start_time,
               end_time: instance.end_time,
@@ -198,7 +198,6 @@
   $(function () {
     var curDate = new Date().getISODate(),
         dayTemplate = _.template($('#oho-day-presentation-template').html()),
-        dataStore = {},
         instanceTemplate = _.template($('#oho-instance-presentation-template').html()),
         nids = [],
         presentationViews = [],
@@ -210,7 +209,6 @@
       var view = new Drupal.OpeningHours.WeekPresentationView({
         date: curDate,
         dayTemplate: dayTemplate,
-        dataStore: dataStore,
         el: this,
         firstDayOfWeek: Drupal.settings.OpeningHours.firstDayOfWeek,
         instanceTemplate: instanceTemplate,
@@ -233,16 +231,15 @@
       // AJAX-request for data, which would be harmful when viewing a list
       // of libraries.
       Drupal.OpeningHours.getInstances({
-        dataStore: dataStore,
         nids: _.pluck(presentationViews, 'nid'),
         week: presentationViews[0].week,
         success: function () {
           _.invoke(presentationViews, 'render');
+
+          // Let anyone who cares know that we're done loading and ready for business.
+          $(window).trigger('OpeningHoursLoaded');
         }
       });
-
-      // Let anyone who cares know that we're done loading and ready for business.
-      $(window).trigger('OpeningHoursLoaded');
     }
 
   });
