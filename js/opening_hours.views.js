@@ -437,6 +437,31 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
   deleteButton: function () {
     var view = this;
 
+    // If we're deleting the root of a repeating instance, we want to
+    // get confirmation from the user first.
+    if (this.model.get('repeat_rule')) {
+      this.confirmationDialog = new Drupal.OpeningHours.DialogView({
+        content: Drupal.t("You are deleting the root instance of a repeating series. All future instances will be deleted as well."),
+        model: this.model,
+        title: Drupal.t('Delete root instance?')
+      });
+      
+      this.confirmationDialog.addButton(Drupal.t('Delete instance'), this.deleteModel);
+      this.confirmationDialog.addButton(Drupal.t('Cancel'), this.remove);
+
+      this.confirmationDialog.render();
+    }
+    else {
+      // Just save the data, no questions asked.
+      this.deleteModel();
+    }
+
+    return false;
+  },
+
+  deleteModel: function () {
+    var view = this;
+
     this.model.destroy({
       error: function () {
         console.log('fail');
@@ -449,8 +474,6 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
         window.location.reload();
       }
     });
-
-    return false;
   }
 });
 
