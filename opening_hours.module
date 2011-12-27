@@ -107,7 +107,7 @@ function opening_hours_cron() {
   // If more than 30 days has passed since last cron, run it again.
   if ($last_monthly < $_SERVER['REQUEST_TIME'] - 30 * 86400) {
     // Delete repeating instance copies more than a week in the past.
-    db_queryd("
+    db_query("
       DELETE FROM {opening_hours}
       WHERE original_instance_id IS NOT NULL
       AND customised = 0
