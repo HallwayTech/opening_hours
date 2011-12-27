@@ -115,6 +115,19 @@ function opening_hours_cron() {
     ", array(
       ':date' => date('Y-m-d', $_SERVER['REQUEST_TIME'] - 7 * 86400)
     ));
+
+    // Propagate instances that are still repeating.
+    $propagate_query = db_query("
+      SELECT * FROM opening_hours
+      WHERE repeat_end_date > '%s'
+      AND repeat_rule IS NOT NULL AND repeat_rule != ''
+    ", array(
+      ':date' => date('Y-m-d', $_SERVER['REQUEST_TIME'])
+    ));
+
+    while ($instance = db_fetch_object($propagate_query)) {
+      opening_hours_repeat_instance_propagate($instance);
+    }
   }
 
   variable_set('opening_hours_last_monthly_cron', $_SERVER['REQUEST_TIME']);
