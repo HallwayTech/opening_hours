@@ -99,6 +99,28 @@ function opening_hours_perm() {
 }
 
 /**
+ * Implements hook_cron().
+ */
+function opening_hours_cron() {
+  $last_monthly = variable_get('opening_hours_last_monthly_cron', 0);
+
+  // If more than 30 days has passed since last cron, run it again.
+  if ($last_monthly < $_SERVER['REQUEST_TIME'] - 30 * 86400) {
+    // Delete repeating instance copies more than a week in the past.
+    db_queryd("
+      DELETE FROM {opening_hours}
+      WHERE original_instance_id IS NOT NULL
+      AND customised = 0
+      AND date < '%s'
+    ", array(
+      ':date' => date('Y-m-d', $_SERVER['REQUEST_TIME'] - 7 * 86400)
+    ));
+  }
+
+  variable_set('opening_hours_last_monthly_cron', $_SERVER['REQUEST_TIME']);
+}
+
+/**
  * Implements hook_theme().
  */
 function opening_hours_theme($existing, $type, $theme, $path) {
