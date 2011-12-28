@@ -58,6 +58,15 @@ function opening_hours_menu() {
     'file path' => $include_path,
   );
 
+  $items['admin/content/opening_hours/blocked_day/%/delete'] = array(
+    'title' => t('Add blocked day'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('opening_hours_admin_blocked_day_delete_form', 4),
+    'access arguments' => array('administer opening hours configuration'),
+    'file' => 'opening_hours.admin.inc',
+    'file path' => $include_path,
+  );
+
   return $items;
 }
 

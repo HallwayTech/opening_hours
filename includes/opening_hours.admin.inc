@@ -66,3 +66,42 @@ function opening_hours_admin_blocked_day_add_form_submit(&$form, &$form_state) {
   $form_state['redirect'] = 'admin/content/opening_hours';
 }
 
+/**
+ * Delete blocked day confirmation page.
+ */
+function opening_hours_admin_blocked_day_delete_form(&$form_state, $day_id) {
+  $date = db_result(db_query("
+    SELECT date FROM {opening_hours_blocked_days} WHERE day_id = %d
+  ", array(':id' => $day_id)));
+
+  if (empty($date)) {
+    return drupal_not_found();
+  }
+
+  return confirm_form(array(
+    'day_id' => array(
+      '#type' => 'value',
+      '#value' => $day_id,
+    ),
+    'date' => array(
+      '#type' => 'value',
+      '#value' => $date,
+    ),
+  ), t('Delete blocked day @date?', array('@date' => $date)), 'admin/content/opening_hours');
+}
+
+/**
+ * Submit handler for delete form.
+ */
+function opening_hours_admin_blocked_day_delete_form_submit(&$form, &$form_state) {
+  db_query('DELETE FROM {opening_hours_blocked_days} WHERE day_id = %d', array(
+    ':id' => $form_state['values']['day_id'],
+  ));
+
+  drupal_set_message(t('Blocked day @date deleted.', array(
+    '@date' => $form_state['values']['date']
+  )));
+  
+  $form_state['redirect'] = 'admin/content/opening_hours';
+}
+
