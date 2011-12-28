@@ -26,7 +26,12 @@ function opening_hours_admin_settings_page() {
     $items[] = $date . ' ' . l(t('Delete'), 'admin/content/opening_hours/blocked_day/' . $date .  '/delete');
   }
 
-  $output[] = theme('item_list', $days);
+  if (!empty($items)) {
+    $output[] = theme('item_list', $items);
+  }
+  else {
+    $output[] = '<p>' . t('No blocked days found.') . '</p>';
+  }
 
   $output[] = l('Add new blocked day', 'admin/content/opening_hours/blocked_day/add');
 
