@@ -80,8 +80,9 @@ function opening_hours_admin_blocked_day_add_form_validate(&$form, &$form_state)
  */
 function opening_hours_admin_blocked_day_add_form_submit(&$form, &$form_state) {
   $blocked_days = variable_get('opening_hours_blocked_days', array());
-
   $blocked_days[] = $form_state['values']['date'];
+
+  sort($blocked_days);
   variable_set('opening_hours_blocked_days', $blocked_days);
 
   drupal_set_message(t('Blocked day added.'));
@@ -109,6 +110,7 @@ function opening_hours_admin_blocked_day_delete_form_submit(&$form, &$form_state
   $index = array_search($form_state['values']['date'], $blocked_days);
 
   unset($blocked_days[$index]);
+  sort($blocked_days);
   variable_set('opening_hours_blocked_days', $blocked_days);
 
   drupal_set_message(t('Blocked day @date deleted.', array(
