@@ -61,6 +61,12 @@ function opening_hours_crud_api_page() {
       if (!empty($_REQUEST['from_date']) && !empty($_REQUEST['to_date']) && !empty($nids)) {
         $output = opening_hours_instance_load_multiple($nids, $_REQUEST['from_date'], $_REQUEST['to_date']);
       }
+      
+      // Filter out instances on blocked days.
+      // array_values is necessary, since filtered values causes holes
+      // in the key order, which in turns causes json_encode to return a
+      // JavaScript object instead of an array in some cases.
+      $output = array_values(array_filter($output, '_opening_hours_exclude_blocked'));
   }
 
   drupal_set_header('Content-Type: application/json');
@@ -104,6 +110,14 @@ function opening_hours_instance_id_api_page($instance) {
   echo json_encode($output);
   exit();
 }
+
+/**
+ * Helper function to exclude blocked days from lookups.
+ */
+function _opening_hours_exclude_blocked($instance) {
+  return !in_array($instance->date, variable_get('opening_hours_blocked_days', array()));
+}
+
 
 /**
  * Helper function to get and sanitise instance from request input.
