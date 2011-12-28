@@ -168,6 +168,7 @@ Drupal.OpeningHours.DayView = Backbone.View.extend({
 
     if (this.isBlocked) {
       container.addClass('blocked');
+      container.text(Drupal.t('Blocked day'));
     }
     else {
       container.dblclick(this.addInstance);

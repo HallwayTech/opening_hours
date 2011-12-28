@@ -58,6 +58,12 @@
 
 #opening-hours-admin .admin-main-view .blocked {
   background: #aaa url(../images/blocked-pattern.png);
+  border: 5px solid #777;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: middle;
 }
 
 #oho-instance-edit-form fieldset {
