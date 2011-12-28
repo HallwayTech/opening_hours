@@ -41,6 +41,23 @@ function opening_hours_menu() {
     'type' => MENU_CALLBACK,
   );
 
+  $items['admin/content/opening_hours'] = array(
+    'title' => t('Opening hours'),
+    'page callback' => 'opening_hours_admin_settings_page',
+    'access arguments' => array('administer opening hours configuration'),
+    'file' => 'opening_hours.admin.inc',
+    'file path' => $include_path,
+  );
+
+  $items['admin/content/opening_hours/blocked_day/add'] = array(
+    'title' => t('Add blocked day'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('opening_hours_admin_blocked_day_add_form'),
+    'access arguments' => array('administer opening hours configuration'),
+    'file' => 'opening_hours.admin.inc',
+    'file path' => $include_path,
+  );
+
   return $items;
 }
 
@@ -95,6 +112,7 @@ function opening_hours_form_node_type_form_alter(&$form, &$form_state) {
 function opening_hours_perm() {
   return array(
     'edit opening hours for content',
+    'administer opening hours configuration',
   );
 }
 
