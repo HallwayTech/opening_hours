@@ -19,11 +19,11 @@ function opening_hours_admin_settings_page() {
     similar organisations, to avoid having to enter closing data on
     dozens of pages.');
 
-  $days = array();
-  $blocked_query = db_query("SELECT * FROM {opening_hours_blocked_days}");
+  $items = array();
+  $blocked_days = variable_get('opening_hours_blocked_days', array());
 
-  while ($row = db_fetch_object($blocked_query)) {
-    $days[] = $row->date . ' ' . l(t('Delete'), 'admin/content/opening_hours/blocked_day/' . $row->day_id .  '/delete');
+  foreach ($blocked_days as $date) {
+    $items[] = $date . ' ' . l(t('Delete'), 'admin/content/opening_hours/blocked_day/' . $date .  '/delete');
   }
 
   $output[] = theme('item_list', $days);
@@ -56,12 +56,30 @@ function opening_hours_admin_blocked_day_add_form(&$form_state) {
 }
 
 /**
- * Submit handler for blocked day form.
+ * Validation handler for blocked day add form.
+ */
+function opening_hours_admin_blocked_day_add_form_validate(&$form, &$form_state) {
+  $matches = array();
+  $date = trim($form_state['values']['date']);
+
+  if (!preg_match('/^(20\d\d-[01]\d-[0-3]\d)/', $date, $matches)) {
+    form_set_error('date', t('Invalid date. Must be in Y-m-d format, eg.  2011-12-28'));
+  }
+
+  // Store the sanitized value as the date.
+  $form_state['values']['date'] = $matches[1];
+}
+
+/**
+ * Submit handler for blocked day add form.
  */
 function opening_hours_admin_blocked_day_add_form_submit(&$form, &$form_state) {
-  if (drupal_write_record('opening_hours_blocked_days', $form_state['values']) == SAVED_NEW) {
-    drupal_set_message(t('Blocked day added'));
-  }
+  $blocked_days = variable_get('opening_hours_blocked_days', array());
+
+  $blocked_days[] = $form_state['values']['date'];
+  variable_set('opening_hours_blocked_days', $blocked_days);
+
+  drupal_set_message(t('Blocked day added.'));
 
   $form_state['redirect'] = 'admin/content/opening_hours';
 }
@@ -69,20 +87,8 @@ function opening_hours_admin_blocked_day_add_form_submit(&$form, &$form_state) {
 /**
  * Delete blocked day confirmation page.
  */
-function opening_hours_admin_blocked_day_delete_form(&$form_state, $day_id) {
-  $date = db_result(db_query("
-    SELECT date FROM {opening_hours_blocked_days} WHERE day_id = %d
-  ", array(':id' => $day_id)));
-
-  if (empty($date)) {
-    return drupal_not_found();
-  }
-
+function opening_hours_admin_blocked_day_delete_form(&$form_state, $date) {
   return confirm_form(array(
-    'day_id' => array(
-      '#type' => 'value',
-      '#value' => $day_id,
-    ),
     'date' => array(
       '#type' => 'value',
       '#value' => $date,
@@ -94,9 +100,11 @@ function opening_hours_admin_blocked_day_delete_form(&$form_state, $day_id) {
  * Submit handler for delete form.
  */
 function opening_hours_admin_blocked_day_delete_form_submit(&$form, &$form_state) {
-  db_query('DELETE FROM {opening_hours_blocked_days} WHERE day_id = %d', array(
-    ':id' => $form_state['values']['day_id'],
-  ));
+  $blocked_days = variable_get('opening_hours_blocked_days', array());
+  $index = array_search($form_state['values']['date'], $blocked_days);
+
+  unset($blocked_days[$index]);
+  variable_set('opening_hours_blocked_days', $blocked_days);
 
   drupal_set_message(t('Blocked day @date deleted.', array(
     '@date' => $form_state['values']['date']

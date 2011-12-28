@@ -83,27 +83,6 @@ function opening_hours_schema() {
     ),
   );
 
-  $schema['opening_hours_blocked_days'] = array(
-    'description' => 'A single opening hours instance, ie. an open period on a specific date.',
-    'fields' => array(
-      'day_id' => array(
-        'description' => 'Primary ID for blocked days.',
-        'type' => 'serial', 
-        'unsigned' => TRUE, 
-        'not null' => TRUE,
-      ), 
-      'date' => array(
-        'description' => 'The date of the blocked day.',
-        'type' => 'text',
-        'pgsql_type' => 'date',
-        'mysql_type' => 'date',
-        'not null' => TRUE, 
-      ),
-    ),
-    'primary key' => array('day_id'),
-    'unique keys' => array('date' => array('date')),
-  );
-
   return $schema;
 }
 
