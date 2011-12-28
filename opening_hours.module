@@ -358,6 +358,7 @@ function opening_hours_add_js($type = 'presentation', $nid = FALSE) {
   $files[] = ($uncompressed) ? 'underscore.js' : 'underscore-min.js';
 
   $settings = array(
+    'blockedDays' => variable_get('opening_hours_blocked_days', array()),
     'firstDayOfWeek' => (integer) variable_get('date_first_day', 1),
     // Options for the jQuery UI datepicker date formatter.
     'formatDate' => array(

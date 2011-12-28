@@ -125,10 +125,6 @@ Drupal.OpeningHours.DayView = Backbone.View.extend({
   className: 'day-view',
   tagName: 'td',
 
-  events: {
-    dblclick: 'addNewInstance'
-  },
-
   initialize: function (options) {
     _.bindAll(this);
 
@@ -143,6 +139,10 @@ Drupal.OpeningHours.DayView = Backbone.View.extend({
         model: model
       });
     });
+
+    this.isBlocked = Drupal.settings.OpeningHours.blockedDays.indexOf(this.date.getISODate()) !== -1;
+
+    return this;
   },
 
   addNewInstance: function (event) {
@@ -162,9 +162,16 @@ Drupal.OpeningHours.DayView = Backbone.View.extend({
     container.empty();
 
     // Render the main template.
-    $(this.el).html(_.each(this.instanceViews, function (view) {
+    container.html(_.each(this.instanceViews, function (view) {
       container.append(view.render().el);
     }));
+
+    if (this.isBlocked) {
+      container.addClass('blocked');
+    }
+    else {
+      container.dblclick(this.addInstance);
+    }
 
     return this;
   }
