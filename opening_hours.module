@@ -309,7 +309,7 @@ function opening_hours_repeat_instance_propagate(&$instance) {
   // Figure out how far the instance has already been propagated, and
   // start there.
   $start_point_date = db_result(db_query(
-    'SELECT MAX(date) FROM opening_hours WHERE original_instance_id = %d'
+    'SELECT MAX(date) FROM {opening_hours} WHERE original_instance_id = %d'
   , array(':id' => $instance->instance_id)));
 
   if ($start_point_date) {
