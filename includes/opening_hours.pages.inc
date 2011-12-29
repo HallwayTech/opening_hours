@@ -55,7 +55,7 @@ function opening_hours_crud_api_page() {
       // In any case, we want to elimitate bogus values, to see if
       // there's anything left to fetch.
       $nids = explode(',', $_REQUEST['nid']);
-      array_filter($nids, is_numeric);
+      array_filter($nids, 'is_numeric');
       array_filter($nids);
 
       if (!empty($_REQUEST['from_date']) && !empty($_REQUEST['to_date']) && !empty($nids)) {

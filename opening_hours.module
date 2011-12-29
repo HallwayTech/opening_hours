@@ -223,7 +223,7 @@ function opening_hours_instance_load_multiple($nids, $from_date, $to_date) {
   }
 
   // Filter nids, so we don't pass nasty things to the database.
-  array_filter($nids, is_numeric);
+  array_filter($nids, 'is_numeric');
   array_filter($nids);
 
   $query = db_query("
@@ -308,9 +308,9 @@ function opening_hours_repeat_instance_propagate(&$instance) {
 
   // Figure out how far the instance has already been propagated, and
   // start there.
-  $start_point_date = db_result(db_query(
-    'SELECT MAX(date) FROM {opening_hours} WHERE original_instance_id = %d'
-  , array(':id' => $instance->instance_id)));
+  $start_point_date = db_result(db_query('
+    SELECT MAX(date) FROM {opening_hours} WHERE original_instance_id = %d
+  ', array(':id' => $instance->instance_id)));
 
   if ($start_point_date) {
     $start_point_date = new DateTime($start_point_date);
