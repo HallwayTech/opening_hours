@@ -20,8 +20,16 @@ Drupal.OpeningHours.Instance = Backbone.Model.extend({
     end_time: null
   },
 
-  initialize: function (attributes, options) {
+  url: function () {
+    // Use the standard Backbone URL logic.
+    var url = Backbone.Model.prototype.url.call(this);
 
+    // Set a query parameters with our propagateChanges option.
+    if (this.get('propagateChanges')) {
+      url = url + '?propagateChanges=' + this.get('propagateChanges');
+    }
+
+    return url;
   }
 });
 

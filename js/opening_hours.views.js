@@ -459,16 +459,40 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
 
       this.confirmationDialog.render();
     }
+    // If we're deleteing an uncustomised propagated instance, offer to
+    // delete the rest of the series as well.
+    else if (this.model.get('original_instance_id') && this.model.get('customised') < 1) {
+      this.confirmationDialog = new Drupal.OpeningHours.DialogView({
+        content: Drupal.t("You are deleting an instance of a repeating series. Do you want to delete future occurences of this instance as well?."),
+        model: this.model,
+        title: Drupal.t('Delete future instances?')
+      });
+      
+      this.confirmationDialog.addButton(Drupal.t('Delete this instance only'), this.deleteModel);
+      this.confirmationDialog.addButton(Drupal.t('Delete future instances'), _.bind(this.deleteModel, this, {propagateChanges: 'future'}));
+      this.confirmationDialog.addButton(Drupal.t('Delete entire series'), _.bind(this.deleteModel, this, {propagateChanges: 'all'}));
+      this.confirmationDialog.addButton(Drupal.t('Cancel'), this.remove);
+
+      this.confirmationDialog.render();
+    }
     else {
-      // Just save the data, no questions asked.
+      // Just delete the instance, no questions asked.
       this.deleteModel();
     }
 
     return false;
   },
 
-  deleteModel: function () {
-    var view = this;
+  deleteModel: function (options) {
+    var headers = {},
+        view = this;
+
+    // Add a header with our propagateChanges verdict, if any.
+    // This due to the sad fact that setting it as data on a DELETE
+    // request does not currently work with jQuery.
+    if (options && options.propagateChanges) {
+      this.model.set({propagateChanges: options.propagateChanges});
+    }
 
     this.model.destroy({
       error: function () {

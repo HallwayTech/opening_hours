@@ -170,13 +170,52 @@ function _opening_hours_instance_update($instance, $original) {
  * @param stdClass $instance
  *   The update instance object.
  */
-function _opening_hours_instance_delete($instance, $original) {
-  $query = db_query("
-    DELETE FROM {opening_hours} 
-    WHERE instance_id = %d OR original_instance_id = %d
-  ", array(
-    ':id' => $instance->instance_id,
-    ':id2' => $instance->instance_id,
-  ));
+function _opening_hours_instance_delete($instance) {
+  // If we want to propagate to all copies, everything is deleted.
+  if ($_REQUEST['propagateChanges'] == 'all') {
+    $query = db_query("
+      DELETE FROM {opening_hours} 
+      WHERE instance_id = %d OR original_instance_id = %d
+    ", array(
+      ':id' => $instance->original_instance_id,
+      ':id2' => $instance->original_instance_id,
+    ));
+  }
+  // Delete only future instances, this one included.
+  elseif ($_REQUEST['propagateChanges'] == 'future') {
+    $query = db_query("
+      DELETE FROM {opening_hours} 
+      WHERE original_instance_id = %d AND date >= '%s'
+    ", array(
+      ':id' => $instance->original_instance_id,
+      ':date' => $instance->date,
+    ));
+
+    // Get the date of the last non-deleted instance.
+    $max_date = db_result(db_query('
+      SELECT MAX(date) FROM {opening_hours} WHERE original_instance_id = %d
+    ', array(':id' => $instance->original_instance_id)));
+
+    // Update the original instance, set it's repeat end date
+    // accordingly (otherwise, it'll be re-propagated next time cron
+    // runs).
+    db_query("
+      UPDATE {opening_hours} 
+      SET repeat_end_date = '%s'
+      WHERE instance_id = %d
+    ", array(
+      ':date' => $max_date,
+      ':id' => $instance->original_instance_id,
+    ));
+  }
+  else {
+    $query = db_query("
+      DELETE FROM {opening_hours} 
+      WHERE instance_id = %d OR original_instance_id = %d
+    ", array(
+      ':id' => $instance->instance_id,
+      ':id2' => $instance->instance_id,
+    ));
+  }
 }
 
