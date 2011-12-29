@@ -161,18 +161,18 @@ Drupal.OpeningHours.DayView = Backbone.View.extend({
 
     container.empty();
 
-    // Render the main template.
-    container.html(_.each(this.instanceViews, function (view) {
-      container.append(view.render().el);
-    }));
-
     if (this.isBlocked) {
       container.addClass('blocked');
       container.text(Drupal.t('Blocked day'));
     }
     else {
-      container.dblclick(this.addInstance);
+      container.click(this.addNewInstance);
     }
+
+    // Render the main template.
+    container.html(_.each(this.instanceViews, function (view) {
+      container.append(view.render().el);
+    }));
 
     return this;
   }
@@ -186,7 +186,7 @@ Drupal.OpeningHours.InstanceDisplayView = Backbone.View.extend({
   template: _.template($("#oho-instance-display-template").html()),
 
   events: {
-    dblclick: 'editInstance'
+    click: 'editInstance'
   },
 
   initialize: function (options) {
