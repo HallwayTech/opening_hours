@@ -147,17 +147,58 @@ function _opening_hours_get_instance_from_request() {
  *   Returns $instance.
  */
 function _opening_hours_instance_update($instance, $original) {
+  // Handling of root instances vs. propagated copies is very different.
+  if (empty($original->original_instance_id)) {
+    // If instance used to repeat, and it's repeat settings have changed,
+    // we need to clean out possibly outdated propagated instances.
+    if (!empty($original->repeat_rule) && (
+          $instance->repeat_rule != $original->repeat_rule || 
+          $instance->repeat_end_date != $original->repeat_end_date)) {
+
+      // If the event no longer repeats, or the repeat rule changed,
+      // wipe all propagated copies.
+      if (empty($instance->repeat_rule) || $instance->repeat_rule != $original->repeat_rule) {
+        db_query("
+          DELETE FROM {opening_hours}
+          WHERE original_instance_id = %d
+        ", array(
+          ':id' => $instance->instance_id
+        ));
+      }
+      // Otherwise, just wipe all instances after the new end date.
+      else {
+        db_query("
+          DELETE FROM {opening_hours}
+          WHERE original_instance_id = %d
+          AND date > '%s'
+        ", array(
+          ':id' => $instance->instance_id,
+          ':end_date' => $instance->repeat_end_date
+        ));
+      }
+    }
+
+  }
+
+  // Once that's all done, first update the original instance, and then
+  // any propagated copies.
+  drupal_write_record('opening_hours', $instance, array('instance_id'));
+
   $query = db_query("
     UPDATE {opening_hours} 
     SET start_time = '%s', end_time = '%s', notice = '%s'
-    WHERE instance_id = %d OR original_instance_id = %d
+    WHERE customised = 0 AND original_instance_id = %d
   ", array(
     ':start' => $instance->start_time,
     ':end' => $instance->end_time,
     ':notice' => $instance->notice,
     ':id' => $instance->instance_id,
-    ':id2' => $instance->instance_id,
   ));
+
+  // Propagate changes if instance has a repeat rule.
+  if (!empty($instance->repeat_rule)) {
+    opening_hours_repeat_instance_propagate($instance);
+  }
 
   return $instance;
 }
