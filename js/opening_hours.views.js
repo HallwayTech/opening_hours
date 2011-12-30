@@ -406,8 +406,24 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
         model: this.model,
         title: Drupal.t('Change root instance?')
       });
-      
+
       this.confirmationDialog.addButton(Drupal.t('Apply changes'), this.saveData);
+      this.confirmationDialog.addButton(Drupal.t('Cancel'), this.remove);
+
+      this.confirmationDialog.render();
+    }
+    // If we're changeing an uncustomised propagated instance, offer to
+    // change the rest of the series as well.
+    else if (this.model.get('original_instance_id') && this.model.get('customised') < 1) {
+      this.confirmationDialog = new Drupal.OpeningHours.DialogView({
+        content: Drupal.t("You are changing an instance of a repeating series. Do you want to change future occurences of this instance as well?."),
+        model: this.model,
+        title: Drupal.t('change future instances?')
+      });
+
+      this.confirmationDialog.addButton(Drupal.t('Change this instance only'), this.changeModel);
+      this.confirmationDialog.addButton(Drupal.t('Change future instances'), _.bind(this.saveData, this, {propagateChanges: 'future'}));
+      //this.confirmationDialog.addButton(Drupal.t('Change entire series'), _.bind(this.saveData, this, {propagateChanges: 'all'}));
       this.confirmationDialog.addButton(Drupal.t('Cancel'), this.remove);
 
       this.confirmationDialog.render();
@@ -420,7 +436,14 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
     return this;
   },
 
-  saveData: function () {
+  saveData: function (options) {
+    // Add a header with our propagateChanges verdict, if any.
+    // This due to the sad fact that setting it as data on a DELETE
+    // request does not currently work with jQuery.
+    if (options && options.propagateChanges) {
+      this.model.set({propagateChanges: options.propagateChanges});
+    }
+
     // Save the data via Backbone.sync.
     this.model.save(this.changedAttributes, {
       error: {
@@ -453,7 +476,7 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
         model: this.model,
         title: Drupal.t('Delete root instance?')
       });
-      
+
       this.confirmationDialog.addButton(Drupal.t('Delete instance'), this.deleteModel);
       this.confirmationDialog.addButton(Drupal.t('Cancel'), this.remove);
 
@@ -467,7 +490,7 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
         model: this.model,
         title: Drupal.t('Delete future instances?')
       });
-      
+
       this.confirmationDialog.addButton(Drupal.t('Delete this instance only'), this.deleteModel);
       this.confirmationDialog.addButton(Drupal.t('Delete future instances'), _.bind(this.deleteModel, this, {propagateChanges: 'future'}));
       this.confirmationDialog.addButton(Drupal.t('Delete entire series'), _.bind(this.deleteModel, this, {propagateChanges: 'all'}));

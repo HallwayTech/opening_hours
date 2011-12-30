@@ -61,7 +61,7 @@ function opening_hours_crud_api_page() {
       if (!empty($_REQUEST['from_date']) && !empty($_REQUEST['to_date']) && !empty($nids)) {
         $output = opening_hours_instance_load_multiple($nids, $_REQUEST['from_date'], $_REQUEST['to_date']);
       }
-      
+
       // Filter out instances on blocked days.
       // array_values is necessary, since filtered values causes holes
       // in the key order, which in turns causes json_encode to return a
@@ -152,7 +152,7 @@ function _opening_hours_instance_update($instance, $original) {
     // If instance used to repeat, and it's repeat settings have changed,
     // we need to clean out possibly outdated propagated instances.
     if (!empty($original->repeat_rule) && (
-          $instance->repeat_rule != $original->repeat_rule || 
+          $instance->repeat_rule != $original->repeat_rule ||
           $instance->repeat_end_date != $original->repeat_end_date)) {
 
       // If the event no longer repeats, or the repeat rule changed,
@@ -189,7 +189,26 @@ function _opening_hours_instance_update($instance, $original) {
     // make the current a root instance and stop the propagation of the
     // original root instance.
     elseif ($_REQUEST['propagateChanges'] == 'future') {
-      // TODO: Implement this.
+      db_query("
+        UPDATE {opening_hours} SET original_instance_id = NULL
+        WHERE instance_id = %d
+      ", array(':id' => $instance->instance_id));
+
+      db_query("
+        UPDATE {opening_hours} SET original_instance_id = %d
+        WHERE original_instance_id = %d AND date > '%s'
+      ", array(
+        ':id' => $instance->instance_id,
+        ':prev_id' => $instance->original_instance_id,
+        ':date' => $instance->date,
+      ));
+
+      // Stop propagating the original instance, since otherwise it
+      // re-propagate on next cron run, nullifying these changes.
+      opening_hours_repeat_stop_propagation($instance->original_instance_id);
+
+      unset($instance->original_instance_id);
+
     }
     // If editing just the single propagated copy, we just set the
     // customised flag so it won't be affected by other changes.
@@ -210,7 +229,7 @@ function _opening_hours_instance_update($instance, $original) {
   drupal_write_record('opening_hours', $instance, array('instance_id'));
 
   $query = db_query("
-    UPDATE {opening_hours} 
+    UPDATE {opening_hours}
     SET start_time = '%s', end_time = '%s', notice = '%s'
     WHERE customised = 0 AND original_instance_id = %d
   ", array(
@@ -240,7 +259,7 @@ function _opening_hours_instance_delete($instance) {
   // If we want to propagate to all copies, everything is deleted.
   if ($_REQUEST['propagateChanges'] == 'all') {
     $query = db_query("
-      DELETE FROM {opening_hours} 
+      DELETE FROM {opening_hours}
       WHERE instance_id = %d OR original_instance_id = %d
     ", array(
       ':id' => $instance->original_instance_id,
@@ -250,7 +269,7 @@ function _opening_hours_instance_delete($instance) {
   // Delete only future instances, this one included.
   elseif ($_REQUEST['propagateChanges'] == 'future') {
     $query = db_query("
-      DELETE FROM {opening_hours} 
+      DELETE FROM {opening_hours}
       WHERE original_instance_id = %d AND date >= '%s'
     ", array(
       ':id' => $instance->original_instance_id,
@@ -263,7 +282,7 @@ function _opening_hours_instance_delete($instance) {
   }
   else {
     $query = db_query("
-      DELETE FROM {opening_hours} 
+      DELETE FROM {opening_hours}
       WHERE instance_id = %d OR original_instance_id = %d
     ", array(
       ':id' => $instance->instance_id,
