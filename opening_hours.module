@@ -345,6 +345,27 @@ function opening_hours_repeat_instance_propagate(&$instance) {
 }
 
 /**
+ * Prevent additional propagation of instance.
+ *
+ * Sets the repeat end date of an instance to the date of the latest
+ * existing instance to prevent additional propagation.
+ */
+function opening_hours_repeat_stop_propagation($instance_id) {
+  // Get the date of the last non-deleted instance.
+  $max_date = db_result(db_query('
+    SELECT MAX(date) FROM {opening_hours} WHERE original_instance_id = %d
+  ', array(':id' => $instance_id)));
+
+  db_query("
+    UPDATE {opening_hours} 
+    SET repeat_end_date = '%s'
+    WHERE instance_id = %d
+  ", array(
+    ':date' => $max_date,
+    ':id' => $instance_id,
+  ));
+}
+/**
  * Helper function to load our JavaScript dependencies.
  */
 function opening_hours_add_js($type = 'presentation', $nid = FALSE) {

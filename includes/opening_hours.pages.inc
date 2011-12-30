@@ -191,22 +191,9 @@ function _opening_hours_instance_delete($instance) {
       ':date' => $instance->date,
     ));
 
-    // Get the date of the last non-deleted instance.
-    $max_date = db_result(db_query('
-      SELECT MAX(date) FROM {opening_hours} WHERE original_instance_id = %d
-    ', array(':id' => $instance->original_instance_id)));
-
-    // Update the original instance, set it's repeat end date
-    // accordingly (otherwise, it'll be re-propagated next time cron
-    // runs).
-    db_query("
-      UPDATE {opening_hours} 
-      SET repeat_end_date = '%s'
-      WHERE instance_id = %d
-    ", array(
-      ':date' => $max_date,
-      ':id' => $instance->original_instance_id,
-    ));
+    // Stop propagating the original instance, since otherwise it
+    // re-propagate on next cron run, nullifying this deletion.
+    opening_hours_repeat_stop_propagation($instance->original_instance_id);
   }
   else {
     $query = db_query("
