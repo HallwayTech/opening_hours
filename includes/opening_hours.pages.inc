@@ -177,7 +177,32 @@ function _opening_hours_instance_update($instance, $original) {
         ));
       }
     }
+  }
+  else {
+    // There are three different scenarios here. Applying changes to the
+    // entire chain of propagated events, to the actual instance and any
+    // subsequent versions, or just the one instance.
+    if ($_REQUEST['propagateChanges'] == 'all') {
+      // TODO: Implement this.
+    }
+    // If we only want to instances subsequent to the current, we'll
+    // make the current a root instance and stop the propagation of the
+    // original root instance.
+    elseif ($_REQUEST['propagateChanges'] == 'future') {
+      // TODO: Implement this.
+    }
+    // If editing just the single propagated copy, we just set the
+    // customised flag so it won't be affected by other changes.
+    else {
+      $instance->customised = 1;
+    }
+  }
 
+  // drupal_write_record will try to write an empty string to the repeat
+  // end date if it has an empty-ish value, which will fail, so be sure
+  // to unset it first in this case.
+  if (empty($instance->repeat_end_date)) {
+    unset($instance->repeat_end_date);
   }
 
   // Once that's all done, first update the original instance, and then
