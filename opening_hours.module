@@ -374,7 +374,7 @@ function opening_hours_add_js($type = 'presentation', $nid = FALSE) {
   // If jQuery Update is configured to use development versions of
   // jQuery, it's probably safe to assume that we want development
   // versions of Backbone and Underscore. 
-  $uncompressed = (variable_get('jquery_update_compression_type') == 'none');
+  $uncompressed = (variable_get('jquery_update_compression_type', '') == 'none');
 
   $files[] = ($uncompressed) ? 'underscore.js' : 'underscore-min.js';
 
