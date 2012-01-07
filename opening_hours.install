@@ -105,6 +105,6 @@ function opening_hours_uninstall() {
 
   // Delete any variables we have set.
   variable_del('admin_theme_opening_hours_opening_hours');
-  db_query("DELETE FROM variable WHERE name LIKE = 'opening_hours_%'");
+  db_query("DELETE FROM variable WHERE name LIKE 'opening_hours_%'");
 }
 
