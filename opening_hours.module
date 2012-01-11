@@ -281,17 +281,18 @@ function opening_hours_format_time($time) {
  * repeat rule ends or two years have passed.
  */
 function opening_hours_repeat_instance_propagate(&$instance) {
-  // Maximum limit is two years in the future.
-  $limit = new DateTime();
-  $limit->add(new DateInterval('P2Y'));
+  // Maximum limit is about two years in the future.
+  $limit = $_SERVER['REQUEST_TIME'] + 365 * 86400;
 
   // Set up the increment for the repeat rule.
   if ($instance->repeat_rule == 'weekly') {
-    $increment = new DateInterval('P1W');
+    $increment = 7 * 86400;
   }
 
   if (!empty($instance->repeat_end_date)) {
-    $end_date = new DateTime($instance->repeat_end_date);
+    // Use noon on the date when converting to timestamp to dodge
+    // daylight savings issues.
+    $end_date = strtotime($instance->repeat_end_date . 'T12:00:00');
 
     // If the end date is before the limit, it becomes the new limit.
     if ($end_date && $end_date < $limit) {
@@ -300,11 +301,11 @@ function opening_hours_repeat_instance_propagate(&$instance) {
   }
 
   // Bail if we don't have an increment.
-  if (!($increment instanceOf DateInterval)) {
+  if (empty($increment) || $increment < 2) {
     return;
   }
 
-  $current_date = new DateTime($instance->date);
+  $current_date = strtotime($instance->date . 'T12:00:00');
 
   // Figure out how far the instance has already been propagated, and
   // start there.
@@ -313,7 +314,7 @@ function opening_hours_repeat_instance_propagate(&$instance) {
   ', array(':id' => $instance->instance_id)));
 
   if ($start_point_date) {
-    $start_point_date = new DateTime($start_point_date);
+    $start_point_date = strtotime($start_point_date . 'T12:00:00');
 
     // If our start point is later than the current date, use that when
     // iterating, so we don't generate duplicate entries.
@@ -323,12 +324,12 @@ function opening_hours_repeat_instance_propagate(&$instance) {
   }
 
   while ($current_date < $limit) {
-    $current_date->add($increment);
+    $current_date += $increment;
 
     // Generate the new propagated instance.
     $propagated = (object) array(
       'nid' => $instance->nid,
-      'date' => $current_date->format('Y-m-d'),
+      'date' => date('Y-m-d', $current_date),
       'start_time' => $instance->start_time,
       'end_time' => $instance->end_time,
       'original_instance_id' => $instance->instance_id,

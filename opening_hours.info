@@ -4,4 +4,5 @@ dependencies[] = date_popup
 dependencies[] = jquery_ui
 dependencies[] = tipsy
 core = 6.x
+php = 5.2.5
 
