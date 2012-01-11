@@ -11,7 +11,12 @@
  */
 Drupal.OpeningHours.Instances = Backbone.Collection.extend({
   model: Drupal.OpeningHours.Instance,
-  url: '/opening_hours/instances'
+
+  // Drupal.settings is not available when this file is loaded, so we
+  // need a callback for the url.
+  url: function () {
+    return Drupal.settings.basePath + 'opening_hours/instances';
+  }
 });
 
 }(jQuery));

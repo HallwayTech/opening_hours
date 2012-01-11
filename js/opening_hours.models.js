@@ -20,6 +20,12 @@ Drupal.OpeningHours.Instance = Backbone.Model.extend({
     end_time: null
   },
 
+  initialize: function () {
+    // Drupal.settings is not available when this file is loaded, so we
+    // need to set re-set urlRoot now when it should be.
+    this.urlRoot = Drupal.settings.basePath + 'opening_hours/instances';
+  },
+
   url: function () {
     // Use the standard Backbone URL logic.
     var url = Backbone.Model.prototype.url.call(this);
