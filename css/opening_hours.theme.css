@@ -23,6 +23,10 @@
   font-size: 150%;
 }
 
+.opening-hours-week a.disabled {
+  color: #ccc;
+}
+
 .opening-hours-week .days {
   padding: 0.5em;
 }

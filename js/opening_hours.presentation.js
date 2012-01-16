@@ -98,6 +98,10 @@
     self.goToPreviousWeek = function (event) {
       var date = new Date(self.week.dates[0].getTime());
 
+      if ($(this).hasClass('disabled')) {
+        return false;
+      }
+
       // Subtract seven days to get the first date of the previous week,
       // and use the router to navigate back to that.
       date.setDate(date.getDate() - 7);
@@ -139,6 +143,13 @@
         self.el.find('.from_date').text($.datepicker.formatDate('d/m', self.week.dates[0]));
         self.el.find('.to_date').text($.datepicker.formatDate('d/m', self.week.dates[6]));
 
+        // If we're at the current week, disable the back arrow.
+        if (self.week.isCurrentWeek()) {
+          self.el.find('.prev').addClass('disabled');
+        } else {
+          self.el.find('.prev').removeClass('disabled');
+        }
+
         // Render each day.
         _.each(self.week.dates, function (date) {
           var dateStr = date.getISODate(),
@@ -151,7 +162,6 @@
               end_time: instance.end_time,
               notice: instance.notice
             }));
-
           });
 
           // Render the day container with the instances in it (or a

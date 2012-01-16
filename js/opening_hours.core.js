@@ -68,6 +68,16 @@
       return dates;
     };
 
+    // Determine if this is the current week.
+    self.isCurrentWeek = function () {
+      var today = new Date().getISODate(),
+          matches = _.filter(self.dates, function (candidate) {
+            return candidate.getISODate() === today;
+          });
+
+      return matches.length > 0;
+    };
+
     /**
      * Get short weekday name in order.
      */
