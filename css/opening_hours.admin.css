@@ -51,6 +51,10 @@
   line-height: 100%;
 }
 
+#opening-hours-admin .admin-main-view .days {
+  clear: left;
+}
+
 #opening-hours-admin .admin-main-view .day-view {
   min-height: 3em;
   height: 3em;
