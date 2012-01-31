@@ -118,12 +118,12 @@
     var d1 = {
           year: date1.getFullYear(),
           month: date1.getMonth(),
-          day: date1.getDate(),
+          day: date1.getDate()
         },
         d2 = {
           year: date2.getFullYear(),
           month: date2.getMonth(),
-          day: date2.getDate(),
+          day: date2.getDate()
         };
 
     // If it's the same date, just return that.
