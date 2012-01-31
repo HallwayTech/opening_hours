@@ -106,3 +106,12 @@
   opacity: 0.5;
 }
 
+.ui-dialog-container .ui-dialog-content {
+  padding: 0;
+}
+
+.ui-dialog-container .instance-edit-view,
+.ui-dialog-container p {
+  padding: 1em;
+}
+

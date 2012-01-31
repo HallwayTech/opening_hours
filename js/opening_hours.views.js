@@ -403,6 +403,9 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
       this.confirmationDialog = new Drupal.OpeningHours.DialogView({
         changedAttributes: this.changedAttributes,
         content: Drupal.t("You are changing the root instance of a repeating series. These changes will be applied to the entire series."),
+        dialogOptions: {
+          width: 600
+        },
         model: this.model,
         title: Drupal.t('Change root instance?')
       });
@@ -418,7 +421,7 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
       this.confirmationDialog = new Drupal.OpeningHours.DialogView({
         content: Drupal.t("You are changing an instance of a repeating series. Do you want to change future occurences of this instance as well?."),
         model: this.model,
-        title: Drupal.t('change future instances?')
+        title: Drupal.t('Change future instances?')
       });
 
       this.confirmationDialog.addButton(Drupal.t('Change this instance only'), this.changeModel);
@@ -472,7 +475,7 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
     // get confirmation from the user first.
     if (this.model.get('repeat_rule')) {
       this.confirmationDialog = new Drupal.OpeningHours.DialogView({
-        content: Drupal.t("You are deleting the root instance of a repeating series. All future instances will be deleted as well."),
+        content: '<p>' + Drupal.t("You are deleting the root instance of a repeating series. All future instances will be deleted as well.") + '</p>',
         model: this.model,
         title: Drupal.t('Delete root instance?')
       });
@@ -486,7 +489,10 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
     // delete the rest of the series as well.
     else if (this.model.get('original_instance_id') && this.model.get('customised') < 1) {
       this.confirmationDialog = new Drupal.OpeningHours.DialogView({
-        content: Drupal.t("You are deleting an instance of a repeating series. Do you want to delete future occurences of this instance as well?."),
+        content: '<p>' + Drupal.t("You are deleting an instance of a repeating series. Do you want to delete future occurences of this instance as well?.") + '</p>',
+        dialogOptions: {
+          width: 400
+        },
         model: this.model,
         title: Drupal.t('Delete future instances?')
       });
