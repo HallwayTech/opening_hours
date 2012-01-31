@@ -234,7 +234,7 @@ function opening_hours_instance_load_multiple($nids, $from_date, $to_date) {
   array_filter($nids);
 
   $query = db_query("
-    SELECT * FROM opening_hours WHERE nid IN (" . implode(',', $nids) . ")
+    SELECT * FROM {opening_hours} WHERE nid IN (" . implode(',', $nids) . ")
     AND date BETWEEN '%s' AND '%s'
   ", array(
     ':from_date' => $from_date,
