@@ -39,6 +39,11 @@
 .opening-hours-week .times {
   clear: right;
   display: block;
+  margin-right: 1em;
   text-align: right;
+}
+
+.opening-hours-week .notice-star {
+  margin-right: -1em;
 }
 
