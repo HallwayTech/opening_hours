@@ -83,14 +83,14 @@ function opening_hours_block($op = 'list', $delta = 0, $edit = array()) {
         ),
       );
       break;
-      case 'view':
-        $block = new stdClass;
-        if ($node = menu_get_object()) {
-          $block->title = t('Opening hours');
-          $block->content = theme('opening_hours_' . $delta, $node);
-        }
+    case 'view':
+      $block = new stdClass();
+      if ($node = menu_get_object()) {
+        $block->title = t('Opening hours');
+        $block->content = theme('opening_hours_' . $delta, $node);
+      }
 
-        return $block;
+      return $block;
   }
 }
 
@@ -139,18 +139,14 @@ function opening_hours_cron() {
       WHERE original_instance_id IS NOT NULL
       AND customised = 0
       AND date < '%s'
-    ", array(
-      ':date' => date('Y-m-d', $_SERVER['REQUEST_TIME'] - 7 * 86400)
-    ));
+    ", array(':date' => date('Y-m-d', $_SERVER['REQUEST_TIME'] - 7 * 86400)));
 
     // Propagate instances that are still repeating.
     $propagate_query = db_query("
       SELECT * FROM opening_hours
       WHERE repeat_end_date > '%s'
       AND repeat_rule IS NOT NULL AND repeat_rule != ''
-    ", array(
-      ':date' => date('Y-m-d', $_SERVER['REQUEST_TIME'])
-    ));
+    ", array(':date' => date('Y-m-d', $_SERVER['REQUEST_TIME'])));
 
     while ($instance = db_fetch_object($propagate_query)) {
       opening_hours_repeat_instance_propagate($instance);
@@ -189,10 +185,12 @@ function opening_hours_theme($existing, $type, $theme, $path) {
 function opening_hours_admin_theme_options($op = 'info', $option = NULL) {
   switch ($op) {
     case 'info':
-      return array('opening_hours' => array(
-        'title' => t('Opening hours'),
-        'description' => t('Use the administration theme when administering the opening hours calender.'),
-      ));
+      return array(
+        'opening_hours' => array(
+          'title' => t('Opening hours'),
+          'description' => t('Use the administration theme when administering the opening hours calender.'),
+        ),
+      );
     case 'check':
       return ($option == 'opening_hours' && arg(0) == 'node' && arg(2) == 'opening_hours');
   }
@@ -367,7 +365,7 @@ function opening_hours_repeat_stop_propagation($instance_id) {
   ', array(':id' => $instance_id)));
 
   db_query("
-    UPDATE {opening_hours} 
+    UPDATE {opening_hours}
     SET repeat_end_date = '%s'
     WHERE instance_id = %d
   ", array(
@@ -383,7 +381,7 @@ function opening_hours_add_js($type = 'presentation', $nid = FALSE) {
 
   // If jQuery Update is configured to use development versions of
   // jQuery, it's probably safe to assume that we want development
-  // versions of Backbone and Underscore. 
+  // versions of Backbone and Underscore.
   $uncompressed = (variable_get('jquery_update_compression_type', '') == 'none');
 
   $files[] = ($uncompressed) ? 'underscore.js' : 'underscore-min.js';
