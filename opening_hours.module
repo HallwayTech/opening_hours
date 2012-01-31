@@ -199,6 +199,15 @@ function opening_hours_admin_theme_options($op = 'info', $option = NULL) {
 }
 
 /**
+ * Implements hook_ctools_plugin_directory().
+ */
+function opening_hours_ctools_plugin_directory($module, $plugin) {
+  if ($module == 'ctools' && !empty($plugin)) {
+    return "plugins/$plugin";
+  }
+}
+
+/**
  * Load opening hours instance by id.
  */
 function opening_hours_instance_load($instance_id) {
