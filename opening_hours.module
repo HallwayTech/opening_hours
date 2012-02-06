@@ -206,6 +206,23 @@ function opening_hours_ctools_plugin_directory($module, $plugin) {
 }
 
 /**
+ * Check if any opening hours has been input on a node.
+ *
+ * Used for hiding the opening_hours block on pages where it will never
+ * display any data.
+ *
+ * @param integer $nid
+ *   Node ID to check.
+ *
+ * @return boolean
+ *   TRUE if opening hours are present, FALSE if not.
+ */
+function opening_hours_present_on_node($nid) {
+  return (boolean) db_result(db_query("SELECT instance_id FROM opening_hours WHERE nid = 1 LIMIT 1"));
+}
+
+
+/**
  * Load opening hours instance by id.
  */
 function opening_hours_instance_load($instance_id) {
@@ -464,4 +481,3 @@ function template_preprocess_opening_hours_week(&$vars) {
     $once = TRUE;
   }
 }
-

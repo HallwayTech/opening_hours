@@ -23,9 +23,32 @@ function opening_hours_week_content_type_render($subtype, $conf, $panel_args, $c
   $node = isset($context->data) ? $context->data : NULL;
 
   $block = new stdClass();
-  $block->title = t('Opening hours');
 
-  $block->content = theme('opening_hours_week', $node);
+  if (empty($conf['hide_if_empty']) || opening_hours_present_on_node($node->nid)) {
+    $block->title = t('Opening hours');
+
+    $block->content = theme('opening_hours_week', $node);
+  }
 
   return $block;
+}
+
+/**
+ * Settings form for the content type.
+ */
+function opening_hours_week_content_type_edit_form(&$form, &$form_state) {
+  $form['hide_if_empty'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Hide if there is no opening hours data for this node'),
+    '#default_value' => !(empty($form_state['conf']['hide_if_empty'])) ?  $form_state['conf']['hide_if_empty'] : NULL,
+  );
+
+  return $form;
+}
+
+/**
+ * Submit handler for the admin form
+ */
+function opening_hours_week_content_type_edit_form_submit(&$form, &$form_state) {
+  $form_state['conf']['hide_if_empty'] = $form_state['values']['hide_if_empty'];
 }
