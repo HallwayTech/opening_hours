@@ -46,6 +46,9 @@ function opening_hours_crud_api_page() {
         if (!empty($instance->repeat_rule)) {
           opening_hours_repeat_instance_propagate($instance);
         }
+
+        // Clear the cached array storing which nodes have opening hours.
+        cache_clear_all('opening_hours_present_on_node', 'cache');
       }
 
       break;
@@ -143,6 +146,7 @@ function _opening_hours_get_instance_from_request() {
  *   The updated instance object.
  * @param stdClass $original
  *   Original instance data as currently stored in the database.
+ *
  * @return stdClass
  *   Returns $instance.
  */
@@ -162,7 +166,7 @@ function _opening_hours_instance_update($instance, $original) {
           DELETE FROM {opening_hours}
           WHERE original_instance_id = %d
         ", array(
-          ':id' => $instance->instance_id
+          ':id' => $instance->instance_id,
         ));
       }
       // Otherwise, just wipe all instances after the new end date.
@@ -173,7 +177,7 @@ function _opening_hours_instance_update($instance, $original) {
           AND date > '%s'
         ", array(
           ':id' => $instance->instance_id,
-          ':end_date' => $instance->repeat_end_date
+          ':end_date' => $instance->repeat_end_date,
         ));
       }
     }
@@ -290,4 +294,3 @@ function _opening_hours_instance_delete($instance) {
     ));
   }
 }
-

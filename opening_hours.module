@@ -217,10 +217,29 @@ function opening_hours_ctools_plugin_directory($module, $plugin) {
  * @return boolean
  *   TRUE if opening hours are present, FALSE if not.
  */
-function opening_hours_present_on_node($nid) {
-  return (boolean) db_result(db_query("SELECT instance_id FROM opening_hours WHERE nid = 1 LIMIT 1"));
-}
+function opening_hours_present_on_node($nid, $reset = FALSE) {
+  static $presence = array();
+  $verdict = FALSE;
 
+  // Load Drupal’s cache if $presence array is empty.
+  if (!$reset && empty($presence) && $cache = cache_get('opening_hours_present_on_node')) {
+    if (is_array($cache->data)) {
+      $presence = $cache->data;
+    }
+  }
+  // Check the static cache.
+  if (!isset($presence[$nid]) || $reset) {
+    $presence[$nid] = (boolean) db_result(db_query("
+      SELECT instance_id FROM {opening_hours} WHERE nid = %d LIMIT 1
+    ", array(
+      ':nid' => $nid,
+    )));
+
+    cache_set('opening_hours_present_on_node', $presence);
+  }
+
+  return $presence[$nid];
+}
 
 /**
  * Load opening hours instance by id.
