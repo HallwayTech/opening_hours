@@ -3,7 +3,7 @@
  * Contains the base Drupal.OpeningHours object with utility functions.
  */
 
-(function(){
+(function ($) {
   "use strict";
 
   Drupal.OpeningHours = {};
@@ -164,5 +164,5 @@
       monthNames: Drupal.settings.OpeningHours.formatDate.monthNames
     });
   });
-}());
+}(jQuery));
 

@@ -5,7 +5,7 @@
 
 (function ($) {
   "use strict";
-  
+
   // Global container for Opening Hours data.
   Drupal.OpeningHours.dataStore = {};
 
@@ -191,7 +191,7 @@
             $notice.remove();
           }
         });
-        
+
         // Fade back in when we're done rendering.
         self.el.fadeIn('fast');
 
@@ -225,7 +225,7 @@
         nid: parseInt($(this).attr('data-nid'), 10),
         week: week
       });
-      
+
       // Add the view to our list, but do not render it yet, as we want
       // to fetch data for all of them in bulk.
       presentationViews.push(view);
@@ -233,7 +233,7 @@
       // Save the view instance for later reference.
       $.data(this, 'weekPresentationViewInstance', view);
     });
-  
+
     if (presentationViews) {
       // Now we have generated our presentationViews, we want to get data
       // for all of them, and render them.
