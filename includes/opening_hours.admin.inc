@@ -33,7 +33,7 @@ function opening_hours_admin_settings_page() {
     $output[] = '<p>' . t('No blocked days found.') . '</p>';
   }
 
-  $output[] = l('Add new blocked day', 'admin/content/opening_hours/blocked_day/add');
+  $output[] = l(t('Add new blocked day'), 'admin/content/opening_hours/blocked_day/add');
 
 
   return implode("\n", $output);
@@ -114,9 +114,8 @@ function opening_hours_admin_blocked_day_delete_form_submit(&$form, &$form_state
   variable_set('opening_hours_blocked_days', $blocked_days);
 
   drupal_set_message(t('Blocked day @date deleted.', array(
-    '@date' => $form_state['values']['date']
+    '@date' => $form_state['values']['date'],
   )));
-  
+
   $form_state['redirect'] = 'admin/content/opening_hours';
 }
-

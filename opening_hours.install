@@ -15,36 +15,36 @@ function opening_hours_schema() {
     'fields' => array(
       'instance_id' => array(
         'description' => 'The primary identifier for an opening hours instance.',
-        'type' => 'serial', 
-        'unsigned' => TRUE, 
+        'type' => 'serial',
+        'unsigned' => TRUE,
         'not null' => TRUE,
-      ), 
+      ),
       'nid' => array(
-        'description' => 'The {node}.nid for the content this opening hours instance belongs to.', 
-        'type' => 'int', 
-        'unsigned' => TRUE, 
-        'not null' => TRUE, 
-      ), 
+        'description' => 'The {node}.nid for the content this opening hours instance belongs to.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
       'date' => array(
         'description' => 'The date this opening hours instance is valid for.',
         'type' => 'text',
         'pgsql_type' => 'date',
         'mysql_type' => 'date',
-        'not null' => TRUE, 
+        'not null' => TRUE,
       ),
       'start_time' => array(
         'description' => 'The time this opening hours instance starts.',
         'type' => 'text',
         'pgsql_type' => 'time',
         'mysql_type' => 'time',
-        'not null' => TRUE, 
+        'not null' => TRUE,
       ),
       'end_time' => array(
         'description' => 'The time this opening hours instance ends.',
         'type' => 'text',
         'pgsql_type' => 'time',
         'mysql_type' => 'time',
-        'not null' => TRUE, 
+        'not null' => TRUE,
       ),
       'notice' => array(
         'description' => 'An optional note that signifies something special about this opening hours instance',
@@ -63,13 +63,13 @@ function opening_hours_schema() {
         'mysql_type' => 'date',
       ),
       'original_instance_id' => array(
-        'description' => 'The {opening_hours}.instance_id for the original instance, which this instance is a repeat of.', 
-        'type' => 'int', 
-        'unsigned' => TRUE, 
+        'description' => 'The {opening_hours}.instance_id for the original instance, which this instance is a repeat of.',
+        'type' => 'int',
+        'unsigned' => TRUE,
       ),
       'customised' => array(
         'description' => 'Boolean indicating whether this instance has been modified, so it differs from its original instance. Not applicable (NULL) for instances that have no original instance.',
-        'type' => 'int', 
+        'type' => 'int',
         'size' => 'tiny',
       ),
     ),
@@ -107,4 +107,3 @@ function opening_hours_uninstall() {
   variable_del('admin_theme_opening_hours_opening_hours');
   db_query("DELETE FROM variable WHERE name LIKE 'opening_hours_%'");
 }
-
