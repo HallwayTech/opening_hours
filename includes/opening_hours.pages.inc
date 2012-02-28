@@ -72,9 +72,7 @@ function opening_hours_crud_api_page() {
       $output = array_values(array_filter($output, '_opening_hours_exclude_blocked'));
   }
 
-  drupal_set_header('Content-Type: application/json');
-  echo json_encode($output);
-  exit();
+  return drupal_json_output($output);
 }
 
 /**
@@ -109,9 +107,7 @@ function opening_hours_instance_id_api_page($instance) {
       break;
   }
 
-  drupal_set_header('Content-Type: application/json');
-  echo json_encode($output);
-  exit();
+  return drupal_json_output($output);
 }
 
 /**
