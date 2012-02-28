@@ -90,8 +90,6 @@ function opening_hours_schema() {
  * Implements of hook_install().
  */
 function opening_hours_install() {
-  drupal_install_schema('opening_hours');
-
   // By default, we want to use the admin theme for our interface. This
   // requires admin_theme module to work properly in Drupal 6.
   variable_set('admin_theme_opening_hours_opening_hours', 1);
@@ -101,8 +99,6 @@ function opening_hours_install() {
  * Implements of hook_uninstall().
  */
 function opening_hours_uninstall() {
-  drupal_uninstall_schema('opening_hours');
-
   // Delete any variables we have set.
   variable_del('admin_theme_opening_hours_opening_hours');
   db_query("DELETE FROM variable WHERE name LIKE 'opening_hours_%'");

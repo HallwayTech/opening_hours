@@ -164,7 +164,7 @@ function _opening_hours_instance_update($instance, $original) {
       if (empty($instance->repeat_rule) || $instance->repeat_rule != $original->repeat_rule) {
         db_query("
           DELETE FROM {opening_hours}
-          WHERE original_instance_id = %d
+          WHERE original_instance_id = :id
         ", array(
           ':id' => $instance->instance_id,
         ));
@@ -173,7 +173,7 @@ function _opening_hours_instance_update($instance, $original) {
       else {
         db_query("
           DELETE FROM {opening_hours}
-          WHERE original_instance_id = %d
+          WHERE original_instance_id = :id
           AND date > '%s'
         ", array(
           ':id' => $instance->instance_id,
@@ -195,12 +195,12 @@ function _opening_hours_instance_update($instance, $original) {
     elseif ($_REQUEST['propagateChanges'] == 'future') {
       db_query("
         UPDATE {opening_hours} SET original_instance_id = NULL
-        WHERE instance_id = %d
+        WHERE instance_id = :id
       ", array(':id' => $instance->instance_id));
 
       db_query("
-        UPDATE {opening_hours} SET original_instance_id = %d
-        WHERE original_instance_id = %d AND date > '%s'
+        UPDATE {opening_hours} SET original_instance_id = :id
+        WHERE original_instance_id = :prev_id AND date > :date
       ", array(
         ':id' => $instance->instance_id,
         ':prev_id' => $instance->original_instance_id,
@@ -234,8 +234,8 @@ function _opening_hours_instance_update($instance, $original) {
 
   $query = db_query("
     UPDATE {opening_hours}
-    SET start_time = '%s', end_time = '%s', notice = '%s'
-    WHERE customised = 0 AND original_instance_id = %d
+    SET start_time = :start, end_time = :end, notice = :notice
+    WHERE customised = 0 AND original_instance_id = :id
   ", array(
     ':start' => $instance->start_time,
     ':end' => $instance->end_time,
@@ -264,7 +264,7 @@ function _opening_hours_instance_delete($instance) {
   if ($_REQUEST['propagateChanges'] == 'all') {
     $query = db_query("
       DELETE FROM {opening_hours}
-      WHERE instance_id = %d OR original_instance_id = %d
+      WHERE instance_id = :id OR original_instance_id = :id2
     ", array(
       ':id' => $instance->original_instance_id,
       ':id2' => $instance->original_instance_id,
@@ -274,7 +274,7 @@ function _opening_hours_instance_delete($instance) {
   elseif ($_REQUEST['propagateChanges'] == 'future') {
     $query = db_query("
       DELETE FROM {opening_hours}
-      WHERE original_instance_id = %d AND date >= '%s'
+      WHERE original_instance_id = :id AND date >= :date
     ", array(
       ':id' => $instance->original_instance_id,
       ':date' => $instance->date,
@@ -287,7 +287,7 @@ function _opening_hours_instance_delete($instance) {
   else {
     $query = db_query("
       DELETE FROM {opening_hours}
-      WHERE instance_id = %d OR original_instance_id = %d
+      WHERE instance_id = :id OR original_instance_id = :id2
     ", array(
       ':id' => $instance->instance_id,
       ':id2' => $instance->instance_id,
