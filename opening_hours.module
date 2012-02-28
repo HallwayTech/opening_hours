@@ -419,10 +419,9 @@ function opening_hours_repeat_stop_propagation($instance_id) {
 function opening_hours_add_js($type = 'presentation', $nid = FALSE) {
   $files = array('opening_hours.prototype.js', 'opening_hours.core.js');
 
-  // If jQuery Update is configured to use development versions of
-  // jQuery, it's probably safe to assume that we want development
-  // versions of Backbone and Underscore.
-  $uncompressed = (variable_get('jquery_update_compression_type', '') == 'none');
+  // Only use the compressed versions of Backbone and Underscore when JS
+  // aggregation is enabled.
+  $uncompressed = (boolean) variable_get('preprocess_js', FALSE);
 
   $files[] = ($uncompressed) ? 'underscore.js' : 'underscore-min.js';
 
