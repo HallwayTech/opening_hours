@@ -419,11 +419,11 @@ function opening_hours_repeat_stop_propagation($instance_id) {
 function opening_hours_add_js($type = 'presentation', $nid = FALSE) {
   $files = array('opening_hours.prototype.js', 'opening_hours.core.js');
 
-  // Only use the compressed versions of Backbone and Underscore when JS
+  // Only use the minified versions of Backbone and Underscore when JS
   // aggregation is enabled.
-  $uncompressed = (boolean) variable_get('preprocess_js', FALSE);
+  $minified = (boolean) variable_get('preprocess_js', FALSE);
 
-  $files[] = ($uncompressed) ? 'underscore.js' : 'underscore-min.js';
+  $files[] = ($minified) ? 'underscore-min.js' : 'underscore.js';
 
   $settings = array(
     'blockedDays' => variable_get('opening_hours_blocked_days', array()),
@@ -463,7 +463,7 @@ function opening_hours_add_js($type = 'presentation', $nid = FALSE) {
     // We use jQuery UI dialogs for editing opening hours.
     drupal_add_library('system', 'ui.dialog');
 
-    $files[] = ($uncompressed) ? 'backbone.js' : 'backbone-min.js';
+    $files[] = ($minified) ? 'backbone-min.js' : 'backbone.js';
     $files[] = 'opening_hours.models.js';
     $files[] = 'opening_hours.collections.js';
     $files[] = 'opening_hours.views.js';
