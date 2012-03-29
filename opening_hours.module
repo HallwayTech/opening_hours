@@ -159,7 +159,7 @@ function opening_hours_cron() {
       AND repeat_rule IS NOT NULL AND repeat_rule != ''
     ", array(':date' => date('Y-m-d', $_SERVER['REQUEST_TIME'])));
 
-    while ($instance = db_fetch_object($propagate_query)) {
+    foreach ($propagate_query as $instance) {
       opening_hours_repeat_instance_propagate($instance);
     }
   }
@@ -356,9 +356,9 @@ function opening_hours_repeat_instance_propagate(&$instance) {
 
   // Figure out how far the instance has already been propagated, and
   // start there.
-  $start_point_date = db_result(db_query('
+  $start_point_date = db_query('
     SELECT MAX(date) FROM {opening_hours} WHERE original_instance_id = %d
-  ', array(':id' => $instance->instance_id)));
+  ', array(':id' => $instance->instance_id))->fetchField();
 
   if ($start_point_date) {
     $start_point_date = strtotime($start_point_date . 'T12:00:00');
