@@ -37,7 +37,7 @@ if (!Array.prototype.indexOf) {
       }
     }
     return -1;
-  }
+  };
 }
 
 (function(){
@@ -75,14 +75,21 @@ if (!Array.prototype.indexOf) {
         var parts = input.split('-');
         // setYear uses two-digit years, setFullYear is what we want.
         this.setFullYear(parts[0]);
-        // setMonth is zero-based (January is month zero), so we subtract
-        // one before setting it.
-        this.setMonth(parseInt(parts[1], 10) - 1);
+
+        // set the hour to noon to avoid timezone issues.
+        this.setHours(12);
+
         // setDate is a bit of a misnomer. It actually sets the day number
         // (1-31), not the full date.
         this.setDate(parts[2]);
-        // set the hour to noon to avoid timezone issues.
-        this.setHours(12);
+
+        // It's important to set the date before the month, since it
+        // might in some cases cause wraparound if current date is 31st,
+        // and the month we're changing to doesn't have a 31st.
+
+        // setMonth is zero-based (January is month zero), so we subtract
+        // one before setting it.
+        this.setMonth(parseInt(parts[1], 10) - 1);
       } else {
         throw 'Input to Date.setISODate was not well-formed. It should be in ISO format, eg. 2011-11-28';
       }
