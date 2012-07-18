@@ -150,9 +150,11 @@
           self.el.find('.prev').removeClass('disabled');
         }
 
-        // Render each day.
+        // Helper variables to add even/odd classes to rows.
         var flip = { 'even' : 'odd', 'odd' : 'even' };
         var even_odd = 'even';
+
+        // Render each day.
         _.each(self.week.dates, function (date) {
           var dateStr = date.getISODate(),
               renderedInstances = [];
@@ -173,6 +175,8 @@
             instances: renderedInstances.join("") || Drupal.t('closed'),
             even_odd: even_odd
           }));
+
+          // Flip the even/odd value every time an instance is added.
           even_odd = flip[even_odd];
         });
 
