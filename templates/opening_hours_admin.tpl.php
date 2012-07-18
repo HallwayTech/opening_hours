@@ -13,7 +13,7 @@
 
 <script type="text/template" id="oho-admin-main-template">
   <div class="dateheader">
-    <h2><?php print t('Week !week, !year', array(
+    <h2><?php echo t('Week !week, !year', array(
       '!week' => '<%- weekNumber %>',
       '!year' => '<%- year %>',
     )); ?></h2>
