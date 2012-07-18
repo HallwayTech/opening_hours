@@ -151,6 +151,8 @@
         }
 
         // Render each day.
+        var flip = { 'even' : 'odd', 'odd' : 'even' };
+        var even_odd = 'even';
         _.each(self.week.dates, function (date) {
           var dateStr = date.getISODate(),
               renderedInstances = [];
@@ -168,8 +170,10 @@
           // simple "closed" notice.
           daysContainer.append(self.options.dayTemplate({
             name: $.datepicker.formatDate('DD', date),
-            instances: renderedInstances.join("") || Drupal.t('closed')
+            instances: renderedInstances.join("") || Drupal.t('closed'),
+            even_odd: even_odd
           }));
+          even_odd = flip[even_odd];
         });
 
         // Convert all notices to Tipsy tooltips.
