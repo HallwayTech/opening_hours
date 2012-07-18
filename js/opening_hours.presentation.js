@@ -139,9 +139,11 @@
         daysContainer.empty();
 
         // Fill in the header.
-        self.el.find('.week_num').text($.datepicker.iso8601Week(self.week.dates[0]));
         self.el.find('.from_date').text($.datepicker.formatDate('d/m', self.week.dates[0]));
         self.el.find('.to_date').text($.datepicker.formatDate('d/m', self.week.dates[6]));
+        // Use the middle day of the week to get the week number, to
+        // dodge off-by-one-errors in older versions of jQuery UI.
+        self.el.find('.week_num').text($.datepicker.iso8601Week(self.week.dates[3]));
 
         // If we're at the current week, disable the back arrow.
         if (self.week.isCurrentWeek()) {
