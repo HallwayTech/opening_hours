@@ -16,8 +16,9 @@ Drupal.OpeningHours.Instance = Backbone.Model.extend({
   defaults: {
     nid: null,
     date: null,
-    start_time: null,
-    end_time: null
+    start_time: '',
+    end_time: '',
+    notice: ''
   },
 
   initialize: function () {
