@@ -8,7 +8,7 @@
  */
 ?>
 <script type="text/template" id="oho-day-presentation-template">
-  <div class="day clear-block">
+  <div class="day <%= even_odd %> clear-block">
     <span class="name"><%= name %></span>
     <span class="times"><%= instances %></span>
   </div>
