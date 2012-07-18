@@ -275,6 +275,7 @@ function opening_hours_instance_load_multiple($nids, $from_date, $to_date) {
   $query = db_query("
     SELECT * FROM {opening_hours} WHERE nid IN (:nids)
     AND date BETWEEN :from_date AND :to_date
+    ORDER BY start_time
   ", array(
     ':nids' => $nids,
     ':from_date' => $from_date,
