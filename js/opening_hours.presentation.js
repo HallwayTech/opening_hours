@@ -139,7 +139,7 @@
         daysContainer.empty();
 
         // Fill in the header.
-        self.el.find('.week_num').text($.datepicker.iso8601Week(self.week.dates[0]));
+        self.el.find('.week_num').text($.datepicker.iso8601Week(self.week.dates[0]) + 1);
         self.el.find('.from_date').text($.datepicker.formatDate('d/m', self.week.dates[0]));
         self.el.find('.to_date').text($.datepicker.formatDate('d/m', self.week.dates[6]));
 
