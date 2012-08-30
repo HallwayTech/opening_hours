@@ -15,8 +15,8 @@ function opening_hours_menu() {
     'title' => 'Opening hours',
     'page callback' => 'opening_hours_node_edit_page',
     'page arguments' => array(1),
-    'access callback' => 'user_access',
-    'access arguments' => array('edit opening hours for content'),
+    'access callback' => 'opening_hours_node_edit_access',
+    'access arguments' => array(1),
     'weight' => 3,
     'file' => 'opening_hours.pages.inc',
     'file path' => $include_path,
@@ -203,6 +203,14 @@ function opening_hours_ctools_plugin_directory($module, $plugin) {
   if ($module == 'ctools' && !empty($plugin)) {
     return "plugins/$plugin";
   }
+}
+
+/**
+ * Access callback for the opening hours node edit page.
+ */
+function opening_hours_node_edit_access($node) {
+  return (user_access('edit opening hours for content') &&
+          variable_get('opening_hours_enabled_' . $node->type));
 }
 
 /**
