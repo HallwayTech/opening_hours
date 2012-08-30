@@ -322,7 +322,7 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
         height: 350,
         width: 600
       },
-      title: this.title,
+      title: this.title
     });
 
     this.editFormDialog.addButton(Drupal.t('Save'), this.saveButton);
@@ -550,7 +550,7 @@ Drupal.OpeningHours.DialogView = Backbone.View.extend({
       draggable: false,
       modal: true,
       resizable: false,
-      title: options.title,
+      title: options.title
     };
 
     // If the caller provided dialog options, merge them into our defaults.
