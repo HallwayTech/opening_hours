@@ -8,16 +8,25 @@
  * Main admin overview page.
  */
 function opening_hours_admin_settings_page() {
-  $output = array();
+  $page = array();
 
   // Blocked days section.
-  $output[] = '<h3>' . t('Blocked days') . '</h3>';
-  $output[] = '<p class="description">';
-  $output[] = t('Blocked days are days where no opening hours are
+  $page['blocked_title'] = array(
+    '#tag' => 'h3',
+    '#type' => 'html_tag',
+    '#value' => t('Blocked days'),
+  );
+
+  $page['blocked_description'] = array(
+    '#tag' => 'p',
+    '#type' => 'html_tag',
+    '#value' => t('Blocked days are days where no opening hours are
     allowed, ie. everythings appears to be closed. You can use this
     functionality to enforce closing days for a large chain of shops or
     similar organisations, to avoid having to enter closing data on
-    dozens of pages.');
+    dozens of pages.'),
+    '#attributes' => array('class' => 'description'),
+  );
 
   $items = array();
   $blocked_days = variable_get('opening_hours_blocked_days', array());
@@ -27,24 +36,26 @@ function opening_hours_admin_settings_page() {
   }
 
   if (!empty($items)) {
-    $output[] = theme('item_list', $items);
+    $page['blocked_day_list'] = array(
+      '#items' => $items,
+      '#theme' => 'item_list',
+    );
   }
   else {
     $output[] = '<p>' . t('No blocked days found.') . '</p>';
   }
 
-  $output[] = l(t('Add new blocked day'), 'admin/content/opening_hours/blocked_day/add');
+  $page['block_add_new'] = array(
+    '#markup' => l(t('Add new blocked day'), 'admin/content/opening_hours/blocked_day/add'),
+  );
 
-
-  return implode("\n", $output);
+  return $page;
 }
 
 /**
  * Add blocked day form.
  */
-function opening_hours_admin_blocked_day_add_form(&$form_state) {
-  $form = array();
-
+function opening_hours_admin_blocked_day_add_form($form, $form_state) {
   $form['date'] = array(
     '#type' => 'date_popup',
     '#title' => t('Date'),
@@ -85,7 +96,9 @@ function opening_hours_admin_blocked_day_add_form_submit(&$form, &$form_state) {
   sort($blocked_days);
   variable_set('opening_hours_blocked_days', $blocked_days);
 
-  drupal_set_message(t('Blocked day added.'));
+  drupal_set_message(t('Blocked day %date added.', array(
+    '%date' => $form_state['values']['date'],
+  )));
 
   $form_state['redirect'] = 'admin/content/opening_hours';
 }
@@ -93,13 +106,13 @@ function opening_hours_admin_blocked_day_add_form_submit(&$form, &$form_state) {
 /**
  * Delete blocked day confirmation page.
  */
-function opening_hours_admin_blocked_day_delete_form(&$form_state, $date) {
-  return confirm_form(array(
-    'date' => array(
-      '#type' => 'value',
-      '#value' => $date,
-    ),
-  ), t('Delete blocked day @date?', array('@date' => $date)), 'admin/content/opening_hours');
+function opening_hours_admin_blocked_day_delete_form($form, $form_state, $date) {
+  $form['date'] = array(
+    '#type' => 'value',
+    '#value' => $date,
+  );
+
+  return confirm_form($form, t('Delete blocked day @date?', array('@date' => $date)), 'admin/content/opening_hours');
 }
 
 /**
