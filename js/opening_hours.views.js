@@ -424,9 +424,9 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
         title: Drupal.t('Change future instances?')
       });
 
-      this.confirmationDialog.addButton(Drupal.t('Change this instance only'), this.changeModel);
-      this.confirmationDialog.addButton(Drupal.t('Change future instances'), _.bind(this.saveData, this, {propagateChanges: 'future'}));
-      //this.confirmationDialog.addButton(Drupal.t('Change entire series'), _.bind(this.saveData, this, {propagateChanges: 'all'}));
+      this.confirmationDialog.addButton(Drupal.t('Change this instance only'), this.saveData);
+      this.confirmationDialog.addButton(Drupal.t('Change future instances'), _.bind(this.saveData, this, { propagateChanges: 'future' }));
+      //this.confirmationDialog.addButton(Drupal.t('Change entire series'), _.bind(this.saveData, this, { propagateChanges: 'all' }));
       this.confirmationDialog.addButton(Drupal.t('Cancel'), this.remove);
 
       this.confirmationDialog.render();
