@@ -195,7 +195,11 @@ function opening_hours_theme($existing, $type, $theme, $path) {
  */
 function opening_hours_admin_paths() {
   return array(
-    'node/*/opening_hours' => TRUE,
+    // We like to use the admin theme, but if overlay.module is active,
+    // we can't use it, since overlay breaks our JavaScript event handling.
+    // Annoyingly, there's no other way of opting out of just the
+    // overlay and keep the admin theme.
+    'node/*/opening_hours' => !function_exists('overlay_init'),
   );
 }
 
