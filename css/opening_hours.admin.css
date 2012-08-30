@@ -31,6 +31,7 @@
 
 #opening-hours-admin .admin-main-view .navigation li {
   float: left;
+  list-style-type: none;
 }
 
 #opening-hours-admin .admin-main-view .navigation a {
