@@ -42,7 +42,7 @@ function opening_hours_menu() {
   );
 
   $items['admin/content/opening_hours'] = array(
-    'title' => t('Opening hours'),
+    'title' => 'Opening hours',
     'page callback' => 'opening_hours_admin_settings_page',
     'access arguments' => array('administer opening hours configuration'),
     'file' => 'opening_hours.admin.inc',
@@ -50,7 +50,7 @@ function opening_hours_menu() {
   );
 
   $items['admin/content/opening_hours/blocked_day/add'] = array(
-    'title' => t('Add blocked day'),
+    'title' => 'Add blocked day',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('opening_hours_admin_blocked_day_add_form'),
     'access arguments' => array('administer opening hours configuration'),
@@ -59,7 +59,7 @@ function opening_hours_menu() {
   );
 
   $items['admin/content/opening_hours/blocked_day/%/delete'] = array(
-    'title' => t('Add blocked day'),
+    'title' => 'Delete blocked day',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('opening_hours_admin_blocked_day_delete_form', 4),
     'access arguments' => array('administer opening hours configuration'),
