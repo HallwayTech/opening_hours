@@ -111,6 +111,13 @@ function opening_hours_form_node_type_form_alter(&$form, &$form_state, $form_id)
     '#title' => t('Opening hours'),
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
+    '#group' => 'additional_settings',
+    '#attributes' => array(
+      'class' => array('opening-hours-node-type-settings-form'),
+    ),
+    '#attached' => array(
+      'js' => array(drupal_get_path('module', 'opening_hours') .  '/js/opening_hours.node-type-form.js'),
+    ),
   );
 
   $form['opening_hours']['opening_hours_enabled'] = array(
