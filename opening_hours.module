@@ -202,18 +202,17 @@ function opening_hours_theme($existing, $type, $theme, $path) {
  */
 function opening_hours_admin_paths() {
   return array(
-    'node/*/opening_hours' => TRUE
+    'node/*/opening_hours' => TRUE,
   );
 }
 
 /**
  * Implements hook_init().
- *
- * If overlay.module is active it breaks our JavaScript event handling.
- * This hook disables overlay on opening hours edit page (but doesn't enable it back
- * as side-effect).
  */
 function opening_hours_init() {
+  // If overlay.module is active it breaks our JavaScript event handling.
+  // This hook disables overlay on opening hours edit page (but doesn't
+  // enable it back as side-effect).
   if (arg(0) == 'node' && arg(2) == 'opening_hours') {
     overlay_set_mode('none');
   }
