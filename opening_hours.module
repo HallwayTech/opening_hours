@@ -161,7 +161,7 @@ function opening_hours_cron() {
 
     // Propagate instances that are still repeating.
     $propagate_query = db_query("
-      SELECT * FROM opening_hours
+      SELECT * FROM {opening_hours}
       WHERE repeat_end_date > '%s'
       AND repeat_rule IS NOT NULL AND repeat_rule != ''
     ", array(':date' => date('Y-m-d', $_SERVER['REQUEST_TIME'])));
@@ -275,7 +275,7 @@ function opening_hours_present_on_node($nid, $reset = FALSE) {
  * Load opening hours instance by id.
  */
 function opening_hours_instance_load($instance_id) {
-  $query = db_query("SELECT * FROM opening_hours WHERE instance_id = :id LIMIT 1", array(
+  $query = db_query("SELECT * FROM {opening_hours} WHERE instance_id = :id LIMIT 1", array(
     ':id' => $instance_id,
   ));
 
