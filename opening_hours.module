@@ -156,13 +156,13 @@ function opening_hours_cron() {
       DELETE FROM {opening_hours}
       WHERE original_instance_id IS NOT NULL
       AND customised = 0
-      AND date < '%s'
+      AND date < :date
     ", array(':date' => date('Y-m-d', $_SERVER['REQUEST_TIME'] - 7 * 86400)));
 
     // Propagate instances that are still repeating.
     $propagate_query = db_query("
       SELECT * FROM {opening_hours}
-      WHERE repeat_end_date > '%s'
+      WHERE repeat_end_date > :date
       AND repeat_rule IS NOT NULL AND repeat_rule != ''
     ", array(':date' => date('Y-m-d', $_SERVER['REQUEST_TIME'])));
 
@@ -428,14 +428,14 @@ function opening_hours_repeat_instance_propagate(&$instance) {
  */
 function opening_hours_repeat_stop_propagation($instance_id) {
   // Get the date of the last non-deleted instance.
-  $max_date = db_result(db_query('
-    SELECT MAX(date) FROM {opening_hours} WHERE original_instance_id = %d
-  ', array(':id' => $instance_id)));
+  $max_date = db_query('
+    SELECT MAX(date) FROM {opening_hours} WHERE original_instance_id = :id
+  ', array(':id' => $instance_id))->fetchField();
 
   db_query("
     UPDATE {opening_hours}
-    SET repeat_end_date = '%s'
-    WHERE instance_id = %d
+    SET repeat_end_date = :date
+    WHERE instance_id = :id
   ", array(
     ':date' => $max_date,
     ':id' => $instance_id,

@@ -170,7 +170,7 @@ function _opening_hours_instance_update($instance, $original) {
         db_query("
           DELETE FROM {opening_hours}
           WHERE original_instance_id = :id
-          AND date > '%s'
+          AND date > :end_date
         ", array(
           ':id' => $instance->instance_id,
           ':end_date' => $instance->repeat_end_date,
