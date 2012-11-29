@@ -213,7 +213,7 @@ function opening_hours_init() {
   // If overlay.module is active it breaks our JavaScript event handling.
   // This hook disables overlay on opening hours edit page (but doesn't
   // enable it back as side-effect).
-  if (arg(0) == 'node' && arg(2) == 'opening_hours') {
+  if (function_exists('overlay_set_mode') && arg(0) == 'node' && arg(2) == 'opening_hours') {
     overlay_set_mode('none');
   }
 }
