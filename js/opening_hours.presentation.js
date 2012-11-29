@@ -166,7 +166,7 @@
             renderedInstances.push(self.options.instanceTemplate({
               start_time: instance.start_time,
               end_time: instance.end_time,
-              notice: instance.notice
+              notice: instance.notice || ''
             }));
           });
 

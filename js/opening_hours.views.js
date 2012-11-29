@@ -219,7 +219,7 @@ Drupal.OpeningHours.InstanceDisplayView = Backbone.View.extend({
     $(this.el).html(this.template({
       start_time: model.get('start_time'),
       end_time: model.get('end_time'),
-      notice: model.get('notice')
+      notice: model.get('notice') || ''
     }));
 
     return this;
@@ -305,7 +305,7 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
       start_time: model.get('start_time'),
       end_time: model.get('end_time'),
       repeat_end_date: model.get('repeat_end_date'),
-      notice: model.get('notice')
+      notice: model.get('notice') || ''
     }));
 
     // Set the placeholder text from the title on all text fields.
