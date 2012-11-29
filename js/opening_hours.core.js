@@ -12,6 +12,9 @@
   // oun the current locale.
   var weekdays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
+  // Crude validation for the date input.
+  var dateValidator = /^\d\d\d\d-[01]\d-[0-3]\d$/;
+
   Drupal.OpeningHours.Week = function (dateStr, firstDayOfWeek) {
     var self = this;
 
@@ -38,7 +41,7 @@
 
     // Find all the dates our week spans over.
     self.getDates = function () {
-      var date = new Date().setISODate(self.dateStr),
+      var date = Drupal.OpeningHours.parseDate(self.dateStr),
           dates = [],
           dayOrder = self.getDayNumberOrder(),
           dayOffset, tempDate,
@@ -52,7 +55,7 @@
 
       while (dates.length < 7) {
         // Start with the given date.
-        tempDate = new Date().setISODate(self.dateStr);
+        tempDate = Drupal.OpeningHours.parseDate(self.dateStr);
 
         // Subtract the dayOffset to jump back to the day we want,
         // starting at the first day of the week based on the
@@ -153,6 +156,19 @@
     }
   };
 
+  // Parse a date in ISO 8601 format.
+  Drupal.OpeningHours.parseDate = function (dateStr) {
+    if (dateValidator.test(dateStr)) {
+      var parts = dateStr.split('-');
+
+      // Set the date from the parts. Remember, months are zero-based,
+      // so subtract 1 from them.
+      return new Date(parts[0], parts[1]-1, parts[2]);
+    } else {
+      throw 'Input to Drupal.OpeningHours.parseDate was not well-formed. It should be in ISO 8601 format, eg. 2011-11-28';
+    }
+  };
+
   // Configure the datepicker when the document is ready.
   $(function () {
     $.datepicker.setDefaults({
@@ -165,4 +181,3 @@
     });
   });
 }(jQuery));
-
