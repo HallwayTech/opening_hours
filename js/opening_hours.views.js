@@ -304,7 +304,7 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
       date: model.get('date'),
       start_time: model.get('start_time'),
       end_time: model.get('end_time'),
-      repeat_end_date: model.get('repeat_end_date'),
+      repeat_end_date: model.get('repeat_end_date') || '',
       notice: model.get('notice') || ''
     }));
 
