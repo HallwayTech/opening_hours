@@ -125,6 +125,26 @@ function opening_hours_form_node_type_form_alter(&$form, &$form_state, $form_id)
     '#title' => t('Enable opening hours for this content type'),
     '#default_value' => variable_get('opening_hours_enabled_' . $form['#node_type']->type, FALSE),
   );
+
+  // If taxonomy.module is enabled, allow the user to pick a category
+  // vocabulary for categorization of opening hours periods.
+  if (function_exists('taxonomy_vocabulary_get_names')) {
+    // Generate a list of form API options for selecting a vocabulary.
+    $options = array(
+      t('- None -'),
+    );
+    foreach (taxonomy_vocabulary_get_names() as $vocab) {
+      $options[$vocab->machine_name] = $vocab->name;
+    }
+
+    $form['opening_hours']['opening_hours_category_vocabulary'] = array(
+      '#type' => 'radios',
+      '#title' => t('Category vocabulary'),
+      '#description' => t('You can select a taxonomy vocabulary to act as categories for opening hours here. If enabled, you will be able to select one of the terms in that vocabulary as category when creating or editing an opening hours time interval.'),
+      '#options' => $options,
+      '#default_value' => variable_get('opening_hours_category_vocabulary_' .  $form['#node_type']->type, 0),
+    );
+  }
 }
 
 /**
