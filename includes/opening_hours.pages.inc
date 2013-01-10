@@ -70,6 +70,7 @@ function opening_hours_crud_api_page() {
       // in the key order, which in turns causes json_encode to return a
       // JavaScript object instead of an array in some cases.
       $output = array_values(array_filter($output, '_opening_hours_exclude_blocked'));
+      break;
   }
 
   return drupal_json_output($output);
@@ -230,11 +231,12 @@ function _opening_hours_instance_update($instance, $original) {
 
   $query = db_query("
     UPDATE {opening_hours}
-    SET start_time = :start, end_time = :end, notice = :notice
+    SET start_time = :start, end_time = :end, category_tid = :tid, notice = :notice
     WHERE customised = 0 AND original_instance_id = :id
   ", array(
     ':start' => $instance->start_time,
     ':end' => $instance->end_time,
+    ':tid' => $instance->category_tid,
     ':notice' => $instance->notice,
     ':id' => $instance->instance_id,
   ));

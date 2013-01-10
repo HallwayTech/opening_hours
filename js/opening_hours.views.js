@@ -214,11 +214,18 @@ Drupal.OpeningHours.InstanceDisplayView = Backbone.View.extend({
   },
 
   render: function (options) {
-    var model = this.model;
+    var model = this.model, category = '', tid;
+
+    tid = model.get('category_tid');
+
+    if (tid && Drupal.settings.OpeningHours.categories) {
+      category = Drupal.settings.OpeningHours.categories[tid];
+    }
 
     $(this.el).html(this.template({
       start_time: model.get('start_time'),
       end_time: model.get('end_time'),
+      category: category,
       notice: model.get('notice') || ''
     }));
 
@@ -305,6 +312,7 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
       start_time: model.get('start_time'),
       end_time: model.get('end_time'),
       repeat_end_date: model.get('repeat_end_date') || '',
+      category_tid: model.get('category_tid') || '',
       notice: model.get('notice') || ''
     }));
 
@@ -319,7 +327,7 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
     this.editFormDialog = new Drupal.OpeningHours.DialogView({
       content: this.el,
       dialogOptions: {
-        height: 350,
+        height: 420,
         width: 600
       },
       title: this.title
@@ -380,6 +388,7 @@ Drupal.OpeningHours.InstanceEditView = Backbone.View.extend({
           end_time: form.find('.end_time').val(),
           repeat_rule: form.find('.repeat select').val(),
           repeat_end_date: form.find('.repeat-end-date').val(),
+          category_tid: form.find('.category-tid').val(),
           notice: form.find('.notice').val()
         };
 

@@ -431,6 +431,11 @@ function opening_hours_repeat_instance_propagate(&$instance) {
       'customised' => 0,
     );
 
+    // Propagate the category_tid, if set.
+    if (!empty($instance->category_tid)) {
+      $propagated->category_tid = $instance->category_tid;
+    }
+
     // Propagate the notice, if set.
     if (!empty($instance->notice)) {
       $propagated->notice = $instance->notice;
@@ -521,6 +526,25 @@ function opening_hours_add_js($type = 'presentation', $nid = FALSE) {
     // For the admin page, we need the node ID, passed from the page callback.
     $settings['nid'] = $nid;
     $settings['path'] = base_path() . drupal_get_path('module', 'opening_hours');
+    $settings['categories'] = array();
+
+    // Also, if we have a category vocabulary selected for this node
+    // type, get the category terms and export them as a setting.
+    if (function_exists('taxonomy_vocabulary_machine_name_load')) {
+      $node = menu_get_object();
+
+      $machine_name = variable_get('opening_hours_category_vocabulary_' . $node->type, 0);
+
+      if (!empty($machine_name)) {
+        $vocabulary = taxonomy_vocabulary_machine_name_load($machine_name);
+
+        if ($vocabulary) {
+          foreach (taxonomy_get_tree($vocabulary->vid, 0, 1) as $term) {
+            $settings['categories'][$term->tid] = $term->name;
+          }
+        }
+      }
+    }
   }
   elseif ($type == 'presentation') {
     $files[] = 'opening_hours.presentation.js';
