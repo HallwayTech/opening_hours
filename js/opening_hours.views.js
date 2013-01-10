@@ -12,7 +12,7 @@ jQuery(function($) {
  * This view is the primary view that controls the other admin views.
  */
 Drupal.OpeningHours.AdminMainView = Backbone.View.extend({
-  className: 'admin-main-view',
+  className: 'opening-hours-admin-main-view',
   template: _.template($("#oho-admin-main-template").html()),
 
   initialize: function (options) {

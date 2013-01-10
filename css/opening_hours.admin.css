@@ -3,7 +3,7 @@
  * Styling for the opening hours admin interface.
  */
 
-#opening-hours-admin .admin-main-view .instance-display-view {
+.opening-hours-admin-main-view .instance-display-view {
   background-color: #cfc;
   border: 1px solid #aea;
   color: #373;
@@ -14,27 +14,27 @@
   border-radius: 0.5em;
 }
 
-#opening-hours-admin .admin-main-view .dateheader {
+.opening-hours-admin-main-view .dateheader {
   clear: left;
   cursor: pointer;
   float: left;
 }
 
-#opening-hours-admin .admin-main-view .dateheader:hover {
+.opening-hours-admin-main-view .dateheader:hover {
   background-color: #ffe;
 }
 
-#opening-hours-admin .admin-main-view .navigation {
+.opening-hours-admin-main-view .navigation {
   float: left;
   margin-left: 3em;
 }
 
-#opening-hours-admin .admin-main-view .navigation li {
+.opening-hours-admin-main-view .navigation li {
   float: left;
   list-style-type: none;
 }
 
-#opening-hours-admin .admin-main-view .navigation a {
+.opening-hours-admin-main-view .navigation a {
   display: block;
   background-color: #eee;
   border: 1px solid;
@@ -46,22 +46,22 @@
 }
 
 /** Prev and next are giant arrow characters, enlarge them. **/
-#opening-hours-admin .admin-main-view .navigation .prev,
-#opening-hours-admin .admin-main-view .navigation .next {
+.opening-hours-admin-main-view .navigation .prev,
+.opening-hours-admin-main-view .navigation .next {
   font-size: 200%;
   line-height: 100%;
 }
 
-#opening-hours-admin .admin-main-view .days {
+.opening-hours-admin-main-view .days {
   clear: left;
 }
 
-#opening-hours-admin .admin-main-view .day-view {
+.opening-hours-admin-main-view .day-view {
   min-height: 3em;
   height: 3em;
 }
 
-#opening-hours-admin .admin-main-view .blocked {
+.opening-hours-admin-main-view .blocked {
   background: #aaa url(../images/blocked-pattern.png);
   border: 5px solid #777;
   color: white;
