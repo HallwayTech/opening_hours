@@ -14,6 +14,10 @@
   border-radius: 0.5em;
 }
 
+.opening-hours-admin-main-view .instance-display-view p {
+  margin: 0;
+}
+
 .opening-hours-admin-main-view .dateheader {
   clear: left;
   cursor: pointer;
