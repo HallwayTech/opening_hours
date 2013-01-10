@@ -46,6 +46,11 @@ function opening_hours_schema() {
         'mysql_type' => 'time',
         'not null' => TRUE,
       ),
+      'category_tid' => array(
+        'description' => 'The {taxonomy_term_data}.tid for the category selected for this instance, if any.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ),
       'notice' => array(
         'description' => 'An optional note that signifies something special about this opening hours instance',
         'type' => 'varchar',
@@ -78,7 +83,7 @@ function opening_hours_schema() {
       'nid_date_time' => array('nid', 'date', 'start_time', 'end_time'),
     ),
     'indexes' => array(
-      'nid_date' => array('nid', 'date'),
+      'nid_date_category_tid' => array('nid', 'date', 'category_tid'),
       'original_custom' => array('original_instance_id', 'customised'),
     ),
   );
@@ -102,4 +107,23 @@ function opening_hours_uninstall() {
   // Delete any variables we have set.
   variable_del('admin_theme_opening_hours_opening_hours');
   db_query("DELETE FROM variable WHERE name LIKE 'opening_hours_%'");
+}
+
+/**
+ * Implements of hook_update_N().
+ */
+function opening_hours_update_7000(&$sandbox) {
+  // Remove the old index, since we create a new one below.
+  // The new one also includes the category tid.
+  db_drop_index('opening_hours', 'nid_date');
+
+  db_add_field('opening_hours', 'category_tid', array(
+    'description' => 'The {taxonomy_term_data}.tid for the category selected for this instance, if any.',
+    'type' => 'int',
+    'unsigned' => TRUE,
+  ), array(
+    'indexes' => array(
+      'nid_date_category_tid' => array('nid', 'date', 'category_tid'),
+    ),
+  ));
 }
