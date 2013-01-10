@@ -344,6 +344,7 @@ function opening_hours_instance_prepare($instance) {
   // Cast integers to the correct type.
   $instance->instance_id = (integer) $instance->instance_id;
   $instance->nid = (integer) $instance->nid;
+  $instance->category_tid = (!empty($instance->category_tid)) ? (integer) $instance->category_tid : NULL;
   $instance->original_instance_id = (!empty($instance->original_instance_id)) ? (integer) $instance->original_instance_id : NULL;
 
   // Backbone expects the primary key to be named `id`. Let's not disappoint.
