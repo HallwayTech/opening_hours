@@ -163,9 +163,16 @@
 
           // Render each instance for this day.
           _.each(Drupal.OpeningHours.dataStore[self.nid][dateStr], function (instance) {
+            var category = '';
+
+            if (instance.category_tid && Drupal.settings.OpeningHours.categories) {
+              category = Drupal.settings.OpeningHours.categories[instance.category_tid];
+            }
+
             renderedInstances.push(self.options.instanceTemplate({
               start_time: instance.start_time,
               end_time: instance.end_time,
+              category: category,
               notice: instance.notice || ''
             }));
           });
@@ -182,23 +189,32 @@
           even_odd = flip[even_odd];
         });
 
-        // Convert all notices to Tipsy tooltips.
-        self.el.find('.notice').each(function () {
-          var $notice = $(this),
-              message = $notice.text();
 
-          if (message) {
+        // Convert all notices to Tipsy tooltips.
+        self.el.find('.instance').each(function () {
+          var $instance = $(this),
+              notices = [],
+              noticeElem;
+
+          // Get the text of all notices, both categories and free-form
+          // text field.
+          $instance.find('.category,.notice').each(function () {
+            // Save the note for later.
+            notices.push(this.textContent);
+
+            // Hide the original text.
+            $(this).hide();
+          });
+
+          if (notices) {
             // Replace the notice with a star, and add a class for
             // styling that.
-            $notice.text('*');
-            $notice.addClass('notice-star');
+            noticeElem = $('<span class="notice-star">');
+            noticeElem.text('*');
 
-            $notice.parent('.instance').attr('title', message).tipsy({
+            $instance.attr('title', notices.join(' – ')).tipsy({
               fade: true
             });
-          }
-          else {
-            $notice.remove();
           }
         });
 
