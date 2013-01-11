@@ -193,8 +193,7 @@
         // Convert all notices to Tipsy tooltips.
         self.el.find('.instance').each(function () {
           var $instance = $(this),
-              notices = [],
-              noticeElem;
+              notices = [];
 
           // Get the text of all notices, both categories and free-form
           // text field.
@@ -209,8 +208,10 @@
           if (notices) {
             // Replace the notice with a star, and add a class for
             // styling that.
-            noticeElem = $('<span class="notice-star">');
-            noticeElem.text('*');
+            $('<span class="notice-star">')
+              .text('*')
+              .appendTo($instance);
+
 
             $instance.attr('title', notices.join(' – ')).tipsy({
               fade: true
