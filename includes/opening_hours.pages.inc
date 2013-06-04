@@ -149,7 +149,7 @@ function _opening_hours_get_instance_from_request() {
  */
 function _opening_hours_instance_update($instance, $original) {
   // Coerce category_tid and notice to NULL if they're empty.
-  $instance->category_tid = ($instance->category_tid < 1) ? $instance->category_tid : NULL;
+  $instance->category_tid = (is_numeric($instance->category_tid)) ? $instance->category_tid : NULL;
   $instance->notice = (!empty($instance->notice)) ? $instance->notice : NULL;
 
   // Handling of root instances vs. propagated copies is very different.
