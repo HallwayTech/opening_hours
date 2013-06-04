@@ -517,14 +517,16 @@ function opening_hours_add_js($type = 'presentation', $nid = FALSE) {
   if (function_exists('taxonomy_vocabulary_machine_name_load')) {
     $node = menu_get_object();
 
-    $machine_name = variable_get('opening_hours_category_vocabulary_' . $node->type, 0);
+    if (!empty($node->type)) {
+      $machine_name = variable_get('opening_hours_category_vocabulary_' . $node->type, 0);
 
-    if (!empty($machine_name)) {
-      $vocabulary = taxonomy_vocabulary_machine_name_load($machine_name);
+      if (!empty($machine_name)) {
+        $vocabulary = taxonomy_vocabulary_machine_name_load($machine_name);
 
-      if ($vocabulary) {
-        foreach (taxonomy_get_tree($vocabulary->vid, 0, 1) as $term) {
-          $settings['categories'][$term->tid] = $term->name;
+        if ($vocabulary) {
+          foreach (taxonomy_get_tree($vocabulary->vid, 0, 1) as $term) {
+            $settings['categories'][$term->tid] = $term->name;
+          }
         }
       }
     }
