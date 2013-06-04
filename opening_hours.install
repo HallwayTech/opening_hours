@@ -79,9 +79,6 @@ function opening_hours_schema() {
       ),
     ),
     'primary key' => array('instance_id'),
-    'unique keys' => array(
-      'nid_date_time' => array('nid', 'date', 'start_time', 'end_time'),
-    ),
     'indexes' => array(
       'nid_date_category_tid' => array('nid', 'date', 'category_tid'),
       'original_custom' => array('original_instance_id', 'customised'),
@@ -126,4 +123,14 @@ function opening_hours_update_7000(&$sandbox) {
       'nid_date_category_tid' => array('nid', 'date', 'category_tid'),
     ),
   ));
+}
+
+/**
+ * Remove unique key, so that “duplicate” opening hours are allowed.
+ *
+ * Enforcing uniqueness doesn't make as much sense after we got 
+ * categories.
+ */
+function opening_hours_update_7001(&$sandbox) {
+  db_drop_unique_key('opening_hours', 'nid_date_time');
 }
