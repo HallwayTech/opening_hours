@@ -269,7 +269,7 @@
       $.data(this, 'weekPresentationViewInstance', view);
     });
 
-    if (presentationViews) {
+    if (presentationViews.length > 0) {
       // Now we have generated our presentationViews, we want to get data
       // for all of them, and render them.
       // This extra step is necesarry to avoid each view making its own
