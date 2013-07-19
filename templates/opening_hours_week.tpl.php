@@ -4,10 +4,11 @@
  * Template for rendering opening hours week.
  */
 
-if (!empty($preface)) {
+if (!empty($preface)):
   print $preface;
-}
-?>
+endif;
+
+if (!empty($node->nid)): ?>
 <div class="opening-hours-week placeholder" data-nid="<?php print $node->nid; ?>">
   <div class="header">
     <a class="prev" href="#prev">←</a>
@@ -19,4 +20,4 @@ if (!empty($preface)) {
   </div>
   <div class="days"></div>
 </div>
-
+<?php endif; ?>
