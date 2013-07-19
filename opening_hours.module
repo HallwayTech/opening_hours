@@ -467,18 +467,11 @@ function opening_hours_repeat_stop_propagation($instance_id) {
     ':id' => $instance_id,
   ));
 }
+
 /**
- * Helper function to load our JavaScript dependencies.
+ * Generate the JavaScript settings array shared between presentation and admin.
  */
-function opening_hours_add_js($type = 'presentation', $nid = FALSE) {
-  $files = array('opening_hours.prototype.js', 'opening_hours.core.js');
-
-  // Only use the minified versions of Backbone and Underscore when JS
-  // aggregation is enabled.
-  $minified = (boolean) variable_get('preprocess_js', FALSE);
-
-  $files[] = ($minified) ? 'underscore-min.js' : 'underscore.js';
-
+function opening_hours_js_settings() {
   $settings = array(
     'blockedDays' => variable_get('opening_hours_blocked_days', array()),
     'firstDayOfWeek' => (integer) variable_get('date_first_day', 1),
@@ -532,35 +525,120 @@ function opening_hours_add_js($type = 'presentation', $nid = FALSE) {
     }
   }
 
-  // We need the datepicker plugin for formatting and selecting dates.
-  date_popup_add();
+  return $settings;
+}
 
-  if ($type == 'admin') {
-    // We use jQuery UI dialogs for editing opening hours.
-    drupal_add_library('system', 'ui.dialog');
+/**
+ * Common JavaScript attachments.
+ *
+ * Generates an array suitable for use with #attached.
+ * See http://shomeya.com/articles/getting-used-to-attached for details.
+ */
+function opening_hours_js_attach_common() {
+  $attachments = &drupal_static(__FUNCTION__);
 
-    $files[] = ($minified) ? 'backbone-min.js' : 'backbone.js';
-    $files[] = 'opening_hours.models.js';
-    $files[] = 'opening_hours.collections.js';
-    $files[] = 'opening_hours.views.js';
-    $files[] = 'opening_hours.routers.js';
-    $files[] = 'opening_hours.admin.js';
+  if (empty($attachments)) {
+    // Provide common JavaScript settings.
+    $attachments['js'][] = array(
+      'data' => array('OpeningHours' => opening_hours_js_settings()),
+      'type' => 'setting',
+    );
+
+    $path = drupal_get_path('module', 'opening_hours') . '/js/';
+    $attachments['js'][] = $path . 'opening_hours.prototype.js';
+    $attachments['js'][] = $path . 'opening_hours.core.js';
+
+    // Use the minified version of Underscore when JS aggregation is enabled.
+    $attachments['js'][] = (variable_get('preprocess_js', FALSE)) ? $path . 'underscore-min.js' : $path . 'underscore.js';
+
+    // We need the datepicker plugin for formatting and selecting dates.
+    // TODO: Figure out if this can be loaded via attachments.
+    date_popup_add();
+  }
+
+  return $attachments;
+}
+
+/**
+ * Admin-specific attachments.
+ */
+function opening_hours_js_attach_admin($nid) {
+  $attachments = &drupal_static(__FUNCTION__ . ':' . $nid);
+
+  if (empty($attachments)) {
+    $path = drupal_get_path('module', 'opening_hours') . '/js/';
+
+    $attachments = opening_hours_js_attach_common();
+
+    // A bit of extra styling.
+    $attachments['css'][] = drupal_get_path('module', 'jquery_ui') . '/jquery.ui/themes/default/ui.all.css';
+    $attachments['css'][] = drupal_get_path('module', 'opening_hours') . '/css/opening_hours.admin.css';
+
+    // We need the dialog library.
+    $attachments['library'][] = array('system', 'ui.dialog');
+
+    // Use the minified version of Backbone when JS aggregation is enabled.
+    $attachments['js'][] = (variable_get('preprocess_js', FALSE)) ? $path . 'backbone-min.js' : $path . 'backbone.js';
+
+    $attachments['js'][] = $path . 'opening_hours.models.js';
+    $attachments['js'][] = $path . 'opening_hours.collections.js';
+    $attachments['js'][] = $path . 'opening_hours.views.js';
+    $attachments['js'][] = $path . 'opening_hours.routers.js';
+    $attachments['js'][] = $path . 'opening_hours.admin.js';
 
     // For the admin page, we need the node ID, passed from the page callback.
-    $settings['nid'] = $nid;
-    $settings['path'] = base_path() . drupal_get_path('module', 'opening_hours');
+    $attachments['js'][0]['data']['OpeningHours'] += array(
+      'nid' => $nid,
+      'path' => base_path() . drupal_get_path('module', 'opening_hours'),
+    );
   }
-  elseif ($type == 'presentation') {
-    $files[] = 'opening_hours.presentation.js';
-  }
+
+  return $attachments;
+}
+
+/**
+ * Attachments for the presentation page.
+ */
+function opening_hours_js_attach_presentation() {
+  $attachments = opening_hours_js_attach_common();
 
   $path = drupal_get_path('module', 'opening_hours');
+  $attachments['css'][] = $path . '/css/opening_hours.theme.css';
+  $attachments['js'][] = $path . '/js/opening_hours.presentation.js';
 
-  foreach ($files as $filename) {
-    drupal_add_js($path . '/js/' . $filename);
+  return $attachments;
+}
+
+/**
+ * Helper function to load our JavaScript dependencies.
+ *
+ * Kept around for backwards compatibilty. You should not call this, if 
+ * possible, add opening_hours_js_attach_presentation or 
+ * opening_hours_js_attach_admin to your render array instead.
+ *
+ * It is still called in template_preprocess_opening_hours_week(), since 
+ * we would need to change the API of the module if we didn't.
+ * So far, it's been possible to embed the opening hours with a single 
+ * theme('opening_hours_week', $node'). If we want that, we'll have to 
+ * add the JavaScript in the preprocessor, rather than the render array.
+ */
+function opening_hours_add_js($type = 'presentation', $nid = FALSE) {
+  if ($type == 'admin') {
+    $attachments = opening_hours_js_attach_admin($nid);
+  }
+  elseif ($type == 'presentation') {
+    $attachments = opening_hours_js_attach_presentation();
   }
 
-  drupal_add_js(array('OpeningHours' => $settings), 'setting');
+  if (!empty($attachments)) {
+    // Create a fake empty element, since that is what 
+    // drupal_process_attached expects.
+    $fakeelement = array(
+      '#attached' => $attachments,
+    );
+
+    drupal_process_attached($fakeelement);
+  }
 }
 
 /**
@@ -571,7 +649,6 @@ function template_preprocess_opening_hours_week(&$vars) {
 
   // Only add JavaScript and templates the first time this is run on a page.
   if (!$once) {
-    drupal_add_css(drupal_get_path('module', 'opening_hours') . '/css/opening_hours.theme.css');
     opening_hours_add_js();
 
     // Add our client-side templates to the page.

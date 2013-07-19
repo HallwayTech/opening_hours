@@ -10,11 +10,16 @@
 function opening_hours_node_edit_page($node) {
   drupal_set_title(t('Opening hours for @title', array('@title' => $node->title)));
 
-  drupal_add_css(drupal_get_path('module', 'jquery_ui') . '/jquery.ui/themes/default/ui.all.css');
-  drupal_add_css(drupal_get_path('module', 'opening_hours') . '/css/opening_hours.admin.css');
-  opening_hours_add_js('admin', $node->nid);
+  $page = array();
 
-  return theme('opening_hours_admin');
+  $page['#attached'] = opening_hours_js_attach_admin($node->nid);
+
+  // No arguments to this theme function.
+  $page[] = array(
+    '#theme' => 'opening_hours_admin',
+  );
+
+  return $page;
 }
 
 /**
