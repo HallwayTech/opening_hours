@@ -243,13 +243,21 @@
     // Set up WeekPresentationView instances for each presentation
     // present on the page.
     $('.opening-hours-week').each(function () {
+      var nid = parseInt($(this).attr('data-nid'), 10);
+
+      // Don't render an opening hours presentation if we don't have a
+      // node ID.
+      if (!nid) {
+        return;
+      }
+
       var view = new Drupal.OpeningHours.WeekPresentationView({
         date: curDate,
         dayTemplate: dayTemplate,
         el: this,
         firstDayOfWeek: Drupal.settings.OpeningHours.firstDayOfWeek,
         instanceTemplate: instanceTemplate,
-        nid: parseInt($(this).attr('data-nid'), 10),
+        nid: nid,
         week: week
       });
 
