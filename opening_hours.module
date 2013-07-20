@@ -548,8 +548,12 @@ function opening_hours_js_attach_common() {
     $attachments['js'][] = $path . 'opening_hours.prototype.js';
     $attachments['js'][] = $path . 'opening_hours.core.js';
 
-    // Use the minified version of Underscore when JS aggregation is enabled.
-    $attachments['js'][] = (variable_get('preprocess_js', FALSE)) ? $path . 'underscore-min.js' : $path . 'underscore.js';
+    $attachments['js'][] = array(
+      // Use the minified version of Underscore when JS aggregation is enabled.
+      'data' => (variable_get('preprocess_js', FALSE)) ? $path . 'underscore-min.js' : $path . 'underscore.js',
+      'type' => 'file',
+      'group' => JS_LIBRARY,
+    );
 
     // We need the datepicker plugin for formatting and selecting dates.
     // TODO: Figure out if this can be loaded via attachments.
@@ -577,8 +581,12 @@ function opening_hours_js_attach_admin($nid) {
     // We need the dialog library.
     $attachments['library'][] = array('system', 'ui.dialog');
 
-    // Use the minified version of Backbone when JS aggregation is enabled.
-    $attachments['js'][] = (variable_get('preprocess_js', FALSE)) ? $path . 'backbone-min.js' : $path . 'backbone.js';
+    $attachments['js'][] = array(
+      // Use the minified version of Backbone when JS aggregation is enabled.
+      'data' => (variable_get('preprocess_js', FALSE)) ? $path . 'backbone-min.js' : $path . 'backbone.js',
+      'type' => 'file',
+      'group' => JS_LIBRARY,
+    );
 
     $attachments['js'][] = $path . 'opening_hours.models.js';
     $attachments['js'][] = $path . 'opening_hours.collections.js';
