@@ -558,9 +558,11 @@ function opening_hours_js_attach_common() {
     // We need the datepicker plugin for formatting and selecting dates.
     // TODO: Figure out if this can be loaded via attachments.
     date_popup_add();
-  }
 
-  return $attachments;
+    // Only return the attachments the first time, to avoid these files 
+    // being added to the page twice, messing up the order.
+    return $attachments;
+  }
 }
 
 /**
