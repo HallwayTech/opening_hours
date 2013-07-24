@@ -6,11 +6,11 @@
 (function ($) {
   "use strict";
 
-  Drupal.OpeningHours = {};
-
-  // Sunday is either the zeroeth or seventh day of the week, depending
-  // oun the current locale.
-  var weekdays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+  Drupal.OpeningHours = {
+    // Sunday is either the zeroeth or seventh day of the week, depending
+    // oun the current locale.
+    weekdays: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
+  };
 
   // Crude validation for the date input.
   var dateValidator = /^\d\d\d\d-[01]\d-[0-3]\d$/;
@@ -89,7 +89,7 @@
           order = [];
 
       while (order.length < 7) {
-        order.push(weekdays[counter % 7]);
+        order.push(Drupal.OpeningHours.weekdays[counter % 7]);
         counter = counter + 1;
       }
 
