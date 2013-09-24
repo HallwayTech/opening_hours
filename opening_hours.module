@@ -422,7 +422,7 @@ function opening_hours_repeat_stop_propagation($instance_id) {
  * Helper function to load our JavaScript dependencies.
  */
 function opening_hours_add_js($type = 'presentation', $nid = FALSE) {
-  $files = array('opening_hours.prototype.js', 'opening_hours.core.js');
+  $files = array('opening_hours.prototype.js', 'opening_hours.core.js', 'jquery-ui-timepicker-addon.js');
 
   // If jQuery Update is configured to use development versions of
   // jQuery, it's probably safe to assume that we want development
