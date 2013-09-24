@@ -210,7 +210,7 @@ function opening_hours_ctools_plugin_directory($module, $plugin) {
  */
 function opening_hours_node_edit_access($node) {
   return (user_access('edit opening hours for content') &&
-          variable_get('opening_hours_enabled_' . $node->type));
+          variable_get('opening_hours_enabled_' . $node->type, false));
 }
 
 /**
