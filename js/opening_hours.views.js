@@ -215,10 +215,9 @@ Drupal.OpeningHours.InstanceDisplayView = Backbone.View.extend({
 
   render: function (options) {
     var model = this.model;
-
     $(this.el).html(this.template({
-      start_time: model.get('start_time'),
-      end_time: model.get('end_time'),
+      start_time: $.datepicker.formatTime('h:mmtt', $.datepicker.parseTime('h:mmtt', model.get('start_time'))),
+      end_time: $.datepicker.formatTime('h:mmtt', $.datepicker.parseTime('h:mmtt', model.get('end_time'))),
       notice: model.get('notice') || ''
     }));
 

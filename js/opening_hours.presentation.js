@@ -164,8 +164,8 @@
           // Render each instance for this day.
           _.each(Drupal.OpeningHours.dataStore[self.nid][dateStr], function (instance) {
             renderedInstances.push(self.options.instanceTemplate({
-              start_time: instance.start_time,
-              end_time: instance.end_time,
+              start_time: $.datepicker.formatTime('h:mmtt', $.datepicker.parseTime('h:mmtt', instance.start_time)),
+              end_time: $.datepicker.formatTime('h:mmtt', $.datepicker.parseTime('h:mmtt', instance.end_time)),
               notice: instance.notice || ''
             }));
           });
